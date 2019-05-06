@@ -154,8 +154,8 @@ const styles = StyleSheet.create({
 
     txtopen: {
         color: "#0090FF",
-        fontSize: 20,
-        marginTop: 60,
+        fontSize: 18,
+        marginTop: 50,
         textAlign: "center",
         fontWeight: "bold"
 
