@@ -13,7 +13,6 @@ import {ListItem, Card, Button, Icon, Avatar, Image, Badge} from 'react-native-e
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import * as ScreenUtil from "../utils/ScreenUtil";
 import Global from "./Global";
-
 export default class My extends Component {
     static navigationOptions = {
         header: null

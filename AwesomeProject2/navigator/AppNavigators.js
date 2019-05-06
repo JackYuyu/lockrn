@@ -86,6 +86,12 @@ const MyStack = createStackNavigator(
                 title: "关于我们"
             }
         },
+        Map: {
+            screen: Map,
+            navigationOptions: {
+                title: "定位"
+            }
+        },
         //jpush部分代码
         App1: {
             screen: App1,

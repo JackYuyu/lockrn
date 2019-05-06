@@ -153,7 +153,7 @@ export default class Home extends Component {
 
     loadData() {
         let REQUEST_URL = `${Global.baseUrl}lock/app/centre/getCentreList`;
-        let params = {"name": "云岭大楼"};
+        let params = {"name": ""};
         fetch(REQUEST_URL, {
             method: 'POST',
             headers: {
@@ -170,7 +170,7 @@ export default class Home extends Component {
             console.log(json.centreList);
             if (json.centreList!== undefined && json.centreList.length > 0) {
                 this.setState({
-                    // centreList: json.centreList,
+                    centreList: json.centreList,
                     centreId: json.centreList[0].id
                 });
                 this.loadFloor();
@@ -201,7 +201,7 @@ export default class Home extends Component {
             console.log(json.floorList);
             if (json.floorList.length > 0) {
                 this.setState({
-                    // floorList: json.floorList,
+                    floorList: json.floorList,
                     floorId: json.floorList[0].id
                 });
                 this.loadLock();
@@ -235,7 +235,7 @@ export default class Home extends Component {
                     value.key = value.id;
                 });
                 this.setState({
-                    // lockList: json.lockList
+                    lockList: json.lockList
                 });
             }
         }).catch((error) => {
