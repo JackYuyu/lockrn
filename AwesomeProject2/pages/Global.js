@@ -8,3 +8,4 @@ const  isIPhoneX = (ios && height == 812 && width == 375);
 const  statusBarHeight = (ios ? (isIPhoneX ? 44 : 20) : StatusBar.currentHeight);
 //登录token
 const token ="";
+const distance = 0.0;

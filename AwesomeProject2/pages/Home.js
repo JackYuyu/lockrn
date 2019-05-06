@@ -31,6 +31,7 @@ export default class Home extends Component {
         this.prev = this.prev.bind(this);
         this.next2 = this.next2.bind(this);
         this.prev2 = this.prev2.bind(this);
+        this.geoDistance = this.geoDistance.bind(this);
 
         this.state = {
             currentPage: 0,
@@ -76,8 +77,9 @@ export default class Home extends Component {
             }],
             centreId: 1,
             floorId: 1,
+            loadType: -1,//0加载楼层 门锁   1加载门锁
+            distance: 0.0//打卡距离
             searchText: '',
-            loadType: -1//0加载楼层 门锁   1加载门锁
         }
     }
 
@@ -183,6 +185,8 @@ export default class Home extends Component {
                     centreList: json.centreList,
                     centreId: json.centreList[0].id
                 });
+                this.geoDistance(json.centreList[0].lat,json.centreList[0].lon,101.232,180.232)
+
                 this.loadFloor();
             }
         }).catch((error) => {
@@ -256,29 +260,63 @@ export default class Home extends Component {
     }
 
     punchClock() {
-        // alert(Global.token);
-        let REQUEST_URL = `${Global.baseUrl}lock/app/clock/punchTheClock`;
-        let params = {"centreId": "1"};
-        console.log(params);
-        fetch(REQUEST_URL, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'token': Global.token,
-            },
-            body: JSON.stringify(params)
-        }).then((response) => {
-            if (response.ok) {
-                console.log(response);
-                return response.json();
-            }
-        }).then((json) => {
-            console.log(json);
-            Toast.show('打卡成功');
-        }).catch((error) => {
-            console.error(error);
-        });
+        // alert(Global.distance)
+        var diss=Global.distance
+        if (diss>2000) {
+            Toast.show('不能打卡')
+            return
+        }
+        else {
+            // alert(Global.token);
+            let REQUEST_URL = `${Global.baseUrl}lock/app/clock/punchTheClock`;
+            let params = {"centreId": "1"};
+            console.log(params);
+            fetch(REQUEST_URL, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'token': Global.token,
+                },
+                body: JSON.stringify(params)
+            }).then((response) => {
+                if (response.ok) {
+                    console.log(response);
+                    return response.json();
+                }
+            }).then((json) => {
+                console.log(json);
+                Toast.show('打卡成功');
+            }).catch((error) => {
+                console.error(error);
+            });
+        }
+    }
+
+    //经纬度转换成三角函数中度分表形式。
+    rad(d) {
+        return d * Math.PI / 180.0;
+    }
+
+    /**
+     *
+     * @param lat1  纬度1
+     * @param lng1  经度1
+     * @param lat2  纬度2
+     * @param lng2  经度2
+     */
+    //根据经纬度计算距离
+    geoDistance(lat1, lng1, lat2, lng2) {
+        let radLat1 = this.rad(lat1);
+        let radLat2 = this.rad(lat2);
+        let a = radLat1 - radLat2;
+        let b = this.rad(lng1) - this.rad(lng2);
+        let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
+        s = s * 6378.137;// EARTH_RADIUS;
+        s = Math.round(s * 10000) / 10; //输出为米
+        console.log("distance:"+s)
+        Global.distance=s
+        return s;
     }
 
     search() {
@@ -319,7 +357,7 @@ export default class Home extends Component {
                                         {
                                             this.state.centreList.map((item, index) => {
                                                 return (
-                                                    <View style={styles.swiperItem}>
+                                                    <View style={styles.swiperItem} key={index}>
                                                         <ImageBackground
                                                             source={require('../static/ld_icon.png')}
                                                             key={index}
@@ -364,7 +402,7 @@ export default class Home extends Component {
                                         {
                                             this.state.floorList.map((item, index) => {
                                                 return (
-                                                    <View style={styles.swiperItem2}>
+                                                    <View style={styles.swiperItem2} key={index}>
                                                         <Text style={{color: "#fff", fontSize: 16}}>{item.name}</Text>
                                                     </View>
                                                 )
