@@ -200,7 +200,7 @@ export default class My extends Component {
                                 bottomDivider={true}
                                 chevron={true}
                                 onPress={() => {
-                                    this.props.navigation.navigate('Map')
+                                    this.props.navigation.navigate('About')
                                 }}
                                 leftAvatar={
                                     <Image

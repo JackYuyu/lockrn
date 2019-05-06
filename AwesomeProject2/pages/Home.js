@@ -19,6 +19,9 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Global from "./Global";
 import {Toast} from '../utils/Toast'
 
+var Geolocation = require('Geolocation');
+//监听定位的id
+var watchID = null
 export default class Home extends Component {
     static navigationOptions = {
         header: null,
@@ -84,6 +87,7 @@ export default class Home extends Component {
 
     componentDidMount() {
         this.loadData();
+        this.beginWatch();
     }
 
     next() {
@@ -159,6 +163,33 @@ export default class Home extends Component {
             floorId: this.state.floorList[page].id,
             loadType: 1
         });
+    }
+
+    //开始监听位置变化
+    beginWatch() {
+        watchID = Geolocation.watchPosition(
+            location => {
+                var result = "速度：" + location.coords.speed +
+                    "\n经度：" + location.coords.longitude +
+                    "\n纬度：" + location.coords.latitude +
+                    "\n准确度：" + location.coords.accuracy +
+                    "\n行进方向：" + location.coords.heading +
+                    "\n海拔：" + location.coords.altitude +
+                    "\n海拔准确度：" + location.coords.altitudeAccuracy +
+                    "\n时间戳：" + location.timestamp;
+                Global.mylon=location.coords.longitude
+                Global.mylat=location.coords.latitude
+                // Alert.alert(result);
+            },
+            error => {
+                Alert.alert("获取位置失败："+ error)
+            }
+        );
+    }
+
+    //停止监听位置变化
+    stopWatch() {
+        Geolocation.clearWatch(watchID);
     }
 
     loadData() {
