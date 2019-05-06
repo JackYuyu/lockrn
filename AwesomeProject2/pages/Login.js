@@ -4,6 +4,7 @@ import {AppRegistry, StyleSheet, Text, View, TextInput, TouchableOpacity, SafeAr
 import {Image,Input,Icon,Button} from "react-native-elements";
 import LinearGradient from 'react-native-linear-gradient'
 import * as ScreenUtil from "../utils/ScreenUtil";
+import {Toast} from "../utils/Toast";
 
 
 export default class Login extends Component {
@@ -107,24 +108,27 @@ export default class Login extends Component {
             body: JSON.stringify(params)
         }).then((response) => {
             if (response.ok) {
-                console.log(response)
+                console.log(response);
                 return response.json();
             }
         }).then((json) => {
-            console.log(json)
-            let tokens=json.token
-            Global.token = json.token;
-            // Global.token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0ZGMwYThkMDY1YTkxMWU5YTUxOGZhMDMwMGJiODZmOSIsImlhdCI6MTU1NjA3Nzc4NSwiZXhwIjoxNTU2NjgyNTg1fQ.VXhKwBY3bSKikWSTzMXlU8DLqyaA4rTNEzr90kxhhplNz817Xdsq_xl7xDBFdsjlH2TVMp0SGvtmbd3DZhPtSg"
-            console.log(Global.token)
-            //存储token
-            AsyncStorage.setItem("token",tokens,(error)=>{
-                console.log(error)
-            });
-            let a=AsyncStorage.getItem("token",(error)=>{
-                console.log(error)
-            })
-            this.props.navigation.navigate('Main')
-
+            console.log(json);
+            if (json.code === 0){
+                let tokens=json.token;
+                Global.token = json.token;
+                // Global.token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0ZGMwYThkMDY1YTkxMWU5YTUxOGZhMDMwMGJiODZmOSIsImlhdCI6MTU1NjA3Nzc4NSwiZXhwIjoxNTU2NjgyNTg1fQ.VXhKwBY3bSKikWSTzMXlU8DLqyaA4rTNEzr90kxhhplNz817Xdsq_xl7xDBFdsjlH2TVMp0SGvtmbd3DZhPtSg"
+                console.log(Global.token);
+                //存储token
+                AsyncStorage.setItem("token",tokens,(error)=>{
+                    console.log(error)
+                });
+                let a=AsyncStorage.getItem("token",(error)=>{
+                    console.log(error)
+                });
+                this.props.navigation.navigate('Main')
+            } else {
+                Toast.show(`${json.msg}`);
+            }
         }).catch((error) => {
             console.error(error);
         });

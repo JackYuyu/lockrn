@@ -65,17 +65,18 @@ export default class Home extends Component {
                 companyName: "云邻通讯",
                 id: 1,
                 name: "307大门"
-            },{
+            }, {
                 companyName: "云邻通讯",
                 id: 2,
                 name: "307后门"
-            },{
+            }, {
                 companyName: "云邻通讯",
                 id: 3,
                 name: "307前门"
             }],
             centreId: 1,
             floorId: 1,
+            loadType: -1//0加载楼层 门锁   1加载门锁
         }
     }
 
@@ -97,7 +98,9 @@ export default class Home extends Component {
         scrollView2.scrollTo({x: 0, y: 0, animated: true});
         this.setState({
             currentPage: page,
-            currentPage2:0
+            centreId: this.state.centreList[page].id,
+            currentPage2: 0,
+            loadType: 0
         });
     }
 
@@ -106,9 +109,8 @@ export default class Home extends Component {
         page = page - 1;
         // 越界判断
         if (page == -1) {
-            page = this.state.centreList.length
+            page = this.state.centreList.length - 1
         }
-        console.log(page, this.state.currentPage);
         let offset = page * 180;
         var scrollView = this.refs.scrollView;
         scrollView.scrollTo({x: offset, y: 0, animated: true});
@@ -116,7 +118,9 @@ export default class Home extends Component {
         scrollView2.scrollTo({x: 0, y: 0, animated: true});
         this.setState({
             currentPage: page,
-            currentPage2:0
+            centreId: this.state.centreList[page].id,
+            currentPage2: 0,
+            loadType: 0
         });
     }
 
@@ -131,8 +135,11 @@ export default class Home extends Component {
         var scrollView = this.refs.scrollView2;
         scrollView.scrollTo({x: offset, y: 0, animated: true});
         this.setState({
-            currentPage2: page
+            currentPage2: page,
+            floorId: this.state.floorList[page].id,
+            loadType: 1
         });
+        console.log(page)
     }
 
     prev2() {
@@ -140,18 +147,20 @@ export default class Home extends Component {
         page = page - 1;
         // 越界判断
         if (page == -1) {
-            page = this.state.floorList.length
+            page = this.state.floorList.length - 1
         }
-        console.log(page, this.state.currentPage2);
         let offset = page * 140;
         var scrollView = this.refs.scrollView2;
         scrollView.scrollTo({x: offset, y: 0, animated: true});
         this.setState({
-            currentPage2: page
+            currentPage2: page,
+            floorId: this.state.floorList[page].id,
+            loadType: 1
         });
     }
 
     loadData() {
+        this.setState({loadType: -1});
         let REQUEST_URL = `${Global.baseUrl}lock/app/centre/getCentreList`;
         let params = {"name": ""};
         fetch(REQUEST_URL, {
@@ -168,7 +177,7 @@ export default class Home extends Component {
             }
         }).then((json) => {
             console.log(json.centreList);
-            if (json.centreList!== undefined && json.centreList.length > 0) {
+            if (json.centreList !== undefined && json.centreList.length > 0) {
                 this.setState({
                     centreList: json.centreList,
                     centreId: json.centreList[0].id
@@ -181,6 +190,7 @@ export default class Home extends Component {
     }
 
     loadFloor() {
+        this.setState({loadType: -1});
         let REQUEST_URL = `${Global.baseUrl}lock/app/floor/getFloorList`;
         let params = {"centreId": `${this.state.centreId}`};
         console.log(params);
@@ -212,6 +222,7 @@ export default class Home extends Component {
     }
 
     loadLock() {
+        this.setState({loadType: -1});
         let REQUEST_URL = `${Global.baseUrl}lock/app/lock/getLockList`;
         let params = {"floorId": `${this.state.floorId}`};
         console.log(params);
@@ -270,6 +281,11 @@ export default class Home extends Component {
     }
 
     render() {
+        if (this.state.loadType === 0) {
+            this.loadFloor()
+        } else if (this.state.loadType === 1) {
+            this.loadLock()
+        }
         return (
             <SafeAreaView style={{flex: 1}}>
                 <View style={styles.container}>
