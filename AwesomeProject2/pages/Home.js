@@ -76,6 +76,7 @@ export default class Home extends Component {
             }],
             centreId: 1,
             floorId: 1,
+            searchText: '',
             loadType: -1//0加载楼层 门锁   1加载门锁
         }
     }
@@ -280,6 +281,10 @@ export default class Home extends Component {
         });
     }
 
+    search() {
+        Alert.alert('搜索', this.state.searchText)
+    }
+
     render() {
         if (this.state.loadType === 0) {
             this.loadFloor()
@@ -300,6 +305,10 @@ export default class Home extends Component {
                                     placeholder='搜索门锁...'
                                     containerStyle={styles.search}
                                     autoFocus={false}
+                                    onChangeText={(text) => {
+                                        this.setState({searchText: text})
+                                    }}
+                                    onSubmitEditing={this.search.bind(this)}
                                     leftIcon={{type: 'font-awesome', name: 'search', color: "#fff"}}/>
                                 <View style={styles.contentContainer}>
                                     <ScrollView

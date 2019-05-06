@@ -52,7 +52,8 @@ export default class Personal extends Component {
                 // let source = { uri: 'data:image/jpeg;base64,' + response.data };
 
                 this.setState({
-                    avatarSource: source
+                    avatarSource: source,
+                    avatar:source
                 });
             }
         });
@@ -65,7 +66,8 @@ export default class Personal extends Component {
             company: navigation.getParam('company', ''),
             mobile: navigation.getParam('mobile', ''),
             address: navigation.getParam('address', ''),
-            avatar: navigation.getParam('avatar', ''),
+            // avatar: {uri: navigation.getParam('avatar', '')},
+            avatar: {uri: "https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1479419211,3323294303&fm=27&gp=0.jpg"}
         });
     }
 
@@ -79,10 +81,7 @@ export default class Personal extends Component {
                                 <Avatar
                                     size="xlarge"
                                     rounded
-                                    source={{
-                                        uri:
-                                            'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1479419211,3323294303&fm=27&gp=0.jpg',
-                                    }}
+                                    source={this.state.avatar}
                                     showEditButton
                                     avatarStyle={styles.avatar}
                                 />
