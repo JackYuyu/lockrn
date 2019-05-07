@@ -47,7 +47,7 @@ export default class Setuppage extends Component {
                     if (Global.token === undefined || Global.token === null || Global.token === "") {
                         this.props.navigation.navigate('Login')
                     } else {
-                        this.props.navigation.navigate('Login')
+                        this.props.navigation.navigate('Main')
                     }
                 }
                 time = time - 1;

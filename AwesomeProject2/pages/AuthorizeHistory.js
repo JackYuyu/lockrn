@@ -45,7 +45,7 @@ export default class AuthorizeHistory extends Component {
                     </View>
                     <View style={styles.cardRight}>
                         {
-                            AuthorizeHistory.getApplyState()
+                            AuthorizeHistory.getApplyState(item.approvalState)
                         }
                     </View>
 
