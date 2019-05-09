@@ -22,66 +22,65 @@ export default class Authorize extends Component {
     };
 
     render() {
+        let arr = [];
+        for (let i = 0; i < 100; i++) {
+            arr.push(i)
+        }
         return (
             <ScrollView>
                 <View style={styles.container}>
                     <FlatList
                         data={this.state.data}
-                        renderItem={this.contentView}
+                        renderItem={({item}) => {
+                            let time = item.createTime.substring(0, item.createTime.length - 3);
+                            return (
+                                <View style={styles.card}>
+                                    <View style={styles.cardWarper}>
+                                        <View style={styles.info}>
+                                            <Text style={styles.visityTitle}>{item.visitorName}正在申请拜访</Text>
+                                            <Text style={styles.visityTime}>时间：{time}</Text>
+                                        </View>
+                                        <View style={{flexDirection: 'row', overflow: "hidden", marginBottom: 15}}>
+                                            {
+                                                arr.map(({item, index}) => (
+                                                    <Divider
+                                                        style={{backgroundColor: '#979797', width: 10, marginRight: 5}}
+                                                        key={index}/>
+                                                ))
+                                            }
+                                        </View>
+                                        <View style={styles.info}>
+                                            <Text style={styles.bottomText}>事由：面试</Text>
+                                            <Text style={styles.bottomText}>届时可能需要使用 <Text
+                                                style={styles.lock}>307室大门</Text> 的权限是否同意授权 </Text>
+                                        </View>
+                                    </View>
+
+                                    <View style={styles.buttons}>
+                                        <Button
+                                            title="拒绝"
+                                            buttonStyle={styles.butn1}
+                                            onPress={() => {
+                                                this.approvalPress(item.id, 2)
+                                            }}
+                                        />
+                                        <Button
+                                            title="同意"
+                                            buttonStyle={styles.butn2}
+                                            onPress={() => {
+                                                this.approvalPress(item.id, 1)
+                                            }}
+                                        />
+                                    </View>
+                                </View>
+                            )
+                        }}
                         style={styles.list}
                         keyExtractor={item => item.id}
                     />
                 </View>
             </ScrollView>
         );
-    }
-
-    contentView({item}) {
-        let arr = [];
-        for (let i = 0; i < 100; i++) {
-            arr.push(i)
-        }
-        let time = item.createTime.substring(0, item.createTime.length - 3);
-        return (
-            <View style={styles.card}>
-                <View style={styles.cardWarper}>
-                    <View style={styles.info}>
-                        <Text style={styles.visityTitle}>{item.visitorName}正在申请拜访</Text>
-                        <Text style={styles.visityTime}>时间：{time}</Text>
-                    </View>
-                    <View style={{flexDirection: 'row', overflow: "hidden", marginBottom: 15}}>
-                        {
-                            arr.map(({item, index}) => (
-                                <Divider style={{backgroundColor: '#979797', width: 10, marginRight: 5}}
-                                         key={index}/>
-                            ))
-                        }
-                    </View>
-                    <View style={styles.info}>
-                        <Text style={styles.bottomText}>事由：面试</Text>
-                        <Text style={styles.bottomText}>届时可能需要使用 <Text
-                            style={styles.lock}>307室大门</Text> 的权限是否同意授权 </Text>
-                    </View>
-                </View>
-
-                <View style={styles.buttons}>
-                    <Button
-                        title="拒绝"
-                        buttonStyle={styles.butn1}
-                        onPress={() => {
-                            Authorize.approvalPress(1, 2)
-                        }}
-                    />
-                    <Button
-                        title="同意"
-                        buttonStyle={styles.butn2}
-                        onPress={() => {
-                            Authorize.approvalPress(1, 1)
-                        }}
-                    />
-                </View>
-            </View>
-        )
     }
 
     loadData() {
@@ -108,7 +107,7 @@ export default class Authorize extends Component {
         });
     }
 
-    static approvalPress(id, approvalState) {
+    approvalPress(id, approvalState) {
         let REQUEST_URL = `${Global.baseUrl}lock/app/visitor/approvalVisitor`;
         let params = {"id": id, "approvalState": approvalState};
         console.log(params);
@@ -126,10 +125,15 @@ export default class Authorize extends Component {
             }
         }).then((json) => {
             console.log(json);
-            if (approvalState === 1) {
-                Toast.show('已接受拜访申请');
+            if (json.code === 0) {
+                if (approvalState === 1) {
+                    Toast.show('已接受拜访申请');
+                } else {
+                    Toast.show('已拒绝拜访申请');
+                }
+                this.loadData()
             } else {
-                Toast.show('已拒绝拜访申请');
+                Toast.show(json.msg)
             }
         }).catch((error) => {
             console.error(error);

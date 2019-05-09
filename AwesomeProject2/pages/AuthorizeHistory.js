@@ -34,7 +34,7 @@ export default class AuthorizeHistory extends Component {
         for (let i = 0; i < 200; i++) {
             arr.push(i)
         }
-        let time = moment(item.createTime).format('YYYY-MM-DD HH:mm');
+        let time = moment(item.startDate).format('YYYY-MM-DD HH:mm');
         return (
             <View style={styles.card}>
                 <View style={styles.cardwrapper}>

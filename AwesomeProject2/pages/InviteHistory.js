@@ -81,7 +81,7 @@ export default class InviteHistory extends Component {
                             fontSize: 15,
                             color: "#555",
                             marginBottom: 5
-                        }}>{item.createTime}</Text>
+                        }}>{item.startDate}</Text>
                         <Text style={{fontSize: 15, color: "#666"}}>{item.companyRemark}</Text>
                     </View>
                     <View style={styles.cardRight}>
