@@ -18,7 +18,7 @@ export default class Apply extends Component {
         username: '',
         mobile: '',
         companyName: '',
-        remark: '商务洽谈',
+        remark: '洽谈',
         date: '',
         startTime: '',
         endTime: '',

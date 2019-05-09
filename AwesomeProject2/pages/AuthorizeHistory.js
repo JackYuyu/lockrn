@@ -39,7 +39,7 @@ export default class AuthorizeHistory extends Component {
             <View style={styles.card}>
                 <View style={styles.cardwrapper}>
                     <View style={styles.cardLeft}>
-                        <Text style={{fontSize: 18, color: "#444662"}}>{item.receptionistName}</Text>
+                        <Text style={{fontSize: 18, color: "#444662"}}>{item.companyName}</Text>
                         <Text style={{fontSize: 16, color: "#444662", marginVertical: 10}}>{item.visitorName}</Text>
                         <Text style={{fontSize: 15, color: "#BDBDBD"}}>{time}</Text>
                     </View>
