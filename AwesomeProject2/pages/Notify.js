@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {AppRegistry, StyleSheet, Text, View, ScrollView, SafeAreaView, FlatList} from 'react-native';
+import {AppRegistry, StyleSheet, Text, View, ScrollView, SafeAreaView, FlatList, DeviceEventEmitter} from 'react-native';
 import {Divider} from "react-native-elements";
 import {Image} from 'react-native-elements';
 import Global from "./Global";
@@ -14,6 +14,10 @@ export default class Notify extends Component {
         this.loadData();
     }
 
+    // 页面销毁时发送通知
+    componentWillUnmount() {
+        DeviceEventEmitter.emit('TNBackFromShopNotification', {});
+    }
     render() {
         return (
             <SafeAreaView style={{flex: 1}}>

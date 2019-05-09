@@ -81,13 +81,29 @@ export default class Home extends Component {
             centreId: 1,
             floorId: 1,
             loadType: -1,//0加载楼层 门锁   1加载门锁
-            distance: 0.0//打卡距离
+            distance: 0.0,//打卡距离
+            currentTime: ""
         }
     }
 
     componentDidMount() {
         this.loadData();
         this.beginWatch();
+        // setInterval(this.setTime,2000);
+        setInterval(()=>{
+            var today=new Date()
+            var h=today.getHours()
+            var m=today.getMinutes()
+            var s=today.getSeconds()
+// add a zero in front of numbers<10
+            if (m<10)
+                {m="0"+m}
+            if (s<10)
+                {s="0"+s}
+            this.setState({
+                currentTime:h+":"+m
+            });
+        },1000);
     }
 
     next() {
@@ -186,7 +202,6 @@ export default class Home extends Component {
             }
         );
     }
-
     //停止监听位置变化
     stopWatch() {
         Geolocation.clearWatch(watchID);
@@ -468,7 +483,7 @@ export default class Home extends Component {
                             <View style={styles.workbg}>
                                 <View style={styles.withC}>
                                     <Text style={styles.dakai}>打卡</Text>
-                                    <Text style={styles.lastTiem}>8:30</Text>
+                                    <Text style={styles.lastTiem}>{this.state.currentTime}</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>
