@@ -10,7 +10,8 @@ import {
     TouchableOpacity,
     StatusBar,
     Alert, SafeAreaView,
-    AsyncStorage,
+    PermissionsAndroid,
+    Platform,
     DeviceEventEmitter
 } from 'react-native';
 import * as ScreenUtil from "../utils/ScreenUtil"
@@ -88,22 +89,58 @@ export default class Home extends Component {
 
     componentDidMount() {
         this.loadData();
-        this.beginWatch();
+        if (Platform.OS === 'ios') {
+            this.beginWatch();
+        } else {
+            this.checkPermission();
+        }
+        // this.beginWatch();
         // setInterval(this.setTime,2000);
-        setInterval(()=>{
-            var today=new Date()
-            var h=today.getHours()
-            var m=today.getMinutes()
-            var s=today.getSeconds()
+        setInterval(() => {
+            var today = new Date()
+            var h = today.getHours()
+            var m = today.getMinutes()
+            var s = today.getSeconds()
 // add a zero in front of numbers<10
-            if (m<10)
-                {m="0"+m}
-            if (s<10)
-                {s="0"+s}
+            if (m < 10) {
+                m = "0" + m
+            }
+            if (s < 10) {
+                s = "0" + s
+            }
             this.setState({
-                currentTime:h+":"+m
+                currentTime: h + ":" + m
             });
-        },1000);
+        }, 1000);
+    }
+
+    checkPermission() {
+        try {
+            //返回Promise类型
+            const granted = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
+            granted.then((data) => {
+                if (data === true) {
+                    this.beginWatch();
+                } else {
+                    this.requestCarmeraPermission()
+                }
+            }).catch((err) => {
+            })
+        } catch (err) {
+        }
+    }
+
+    async requestCarmeraPermission() {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                    'title': '位置权限',
+                    'message': '我们需要获取您的位置权限实现打卡功能。'
+                }
+            );
+        } catch (err) {
+        }
     }
 
     next() {
@@ -193,15 +230,16 @@ export default class Home extends Component {
                     "\n海拔：" + location.coords.altitude +
                     "\n海拔准确度：" + location.coords.altitudeAccuracy +
                     "\n时间戳：" + location.timestamp;
-                Global.mylon=location.coords.longitude
-                Global.mylat=location.coords.latitude
+                Global.mylon = location.coords.longitude
+                Global.mylat = location.coords.latitude
                 // Alert.alert(result);
             },
             error => {
-                Alert.alert("获取位置失败："+ error)
+                Alert.alert("获取位置失败：" + error)
             }
         );
     }
+
     //停止监听位置变化
     stopWatch() {
         Geolocation.clearWatch(watchID);
@@ -230,7 +268,8 @@ export default class Home extends Component {
                     centreList: json.centreList,
                     centreId: json.centreList[0].id
                 });
-                this.geoDistance(json.centreList[0].lat,json.centreList[0].lon,Global.mylat,Global.mylon )
+                // alert(Global.mylat)
+                this.geoDistance(json.centreList[0].lat, json.centreList[0].lon, Global.latitude, Global.longitude)
 
                 this.loadFloor();
             }
@@ -306,12 +345,10 @@ export default class Home extends Component {
 
     punchClock() {
         // alert(Global.distance)
-        var diss=Global.distance
-        if (diss>2000) {
-            Toast.show('不能打卡')
-            return
-        }
-        else {
+        let diss = Global.distance;
+        if (Number.isNaN(diss) || diss > 2000) {
+            Toast.show('不能打卡');
+        } else {
             // alert(Global.token);
             let REQUEST_URL = `${Global.baseUrl}lock/app/clock/punchTheClock`;
             let params = {"centreId": "1"};
@@ -359,10 +396,11 @@ export default class Home extends Component {
         let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
         s = s * 6378.137;// EARTH_RADIUS;
         s = Math.round(s * 10000) / 10; //输出为米
-        console.log("distance:"+s)
-        Global.distance=s
+        console.log("distance:" + s)
+        Global.distance = s
         return s;
     }
+
     render() {
         if (this.state.loadType === 0) {
             this.loadFloor()
