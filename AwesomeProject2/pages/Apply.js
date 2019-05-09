@@ -56,10 +56,11 @@ export default class Apply extends Component {
             } else if (this.state.isToday && date.getTime() - currentTime.getTime() < 30 * 60 * 1000) {
                 Toast.show('拜访需在半小时以后')
             } else {
-                let end = Number(time.format('HH')) + 1;
-                let minutes = time.format('mm');
+                let hour = date.getHours();
+                let minutes = date.getMinutes();
+                let end = Number(hour) + 1;
                 this.setState({
-                    startTime: time.format('HH:mm'),
+                    startTime: `${hour}:${minutes}`,
                     endTime: `${end}:${minutes}`
                 });
             }
