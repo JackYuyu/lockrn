@@ -45,7 +45,7 @@ export default class ApplyHistory extends Component {
                     </View>
                     <View style={styles.cardRight}>
                         {
-                            ApplyHistory.getApplyState()
+                            ApplyHistory.getApplyState(item.approvalState)
                         }
                     </View>
 

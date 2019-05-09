@@ -7,7 +7,7 @@ import {
     ImageBackground,
     ScrollView,
     TouchableOpacity,
-    SafeAreaView, AsyncStorage
+    SafeAreaView, AsyncStorage, DeviceEventEmitter
 } from 'react-native';
 import {ListItem, Card, Button, Icon, Avatar, Image, Badge} from 'react-native-elements'
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -33,6 +33,18 @@ export default class My extends Component {
     componentDidMount() {
         this.loadData();
         this.getMsgNum();
+    }
+    // 注册监听
+    componentWillMount() {
+//监听从购物车返回
+        this.backFromShopListener = DeviceEventEmitter.addListener('TNBackFromShopNotification', () => {
+            this.getMsgNum();
+        });
+    }
+
+// 移除监听
+    componentWillUnmount() {
+        this.backFromShopListener && bridge.removeEventEmitterListener(this.backFromShopListener);
     }
 
     render() {
@@ -69,12 +81,12 @@ export default class My extends Component {
                                         style={{width: 120, height: 120}}
                                     />
                                     <View style={styles.right}>
-                                        <Text style={{fontSize: 20, fontWeight: "bold"}}> {this.state.name}</Text>
+                                        <Text style={{fontSize: 20, fontWeight: "bold"}}>{this.state.name}</Text>
                                         <Text style={{
                                             fontSize: 18,
                                             color: "#444662",
                                             marginVertical: 5
-                                        }}> {this.state.company}</Text>
+                                        }}>{this.state.company}</Text>
                                         <View style={{flexDirection: "row"}}>
 
                                             <Image
@@ -82,7 +94,7 @@ export default class My extends Component {
                                                 style={{width: 12, height: 18, marginRight: 5}}
                                             />
 
-                                            <Text style={{fontSize: 16, color: "#444662"}}> {this.state.mobile}</Text>
+                                            <Text style={{fontSize: 16, color: "#444662"}}>{this.state.mobile}</Text>
                                         </View>
                                     </View>
                                 </View>

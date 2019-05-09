@@ -38,7 +38,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string></string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -71,5 +71,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSCameraUsageDescription</key>
+	<string>不允许拍照将会影响该应用的部分功能</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>不允许拍照将会影响该应用的部分功能</string>
 </dict>
 </plist>
