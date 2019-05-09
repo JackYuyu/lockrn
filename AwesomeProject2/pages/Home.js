@@ -230,8 +230,7 @@ export default class Home extends Component {
                     centreList: json.centreList,
                     centreId: json.centreList[0].id
                 });
-                // alert(Global.mylat)
-                this.geoDistance(json.centreList[0].lat,json.centreList[0].lon,Global.latitude,Global.longitude)
+                this.geoDistance(json.centreList[0].lat,json.centreList[0].lon,Global.mylat,Global.mylon )
 
                 this.loadFloor();
             }
