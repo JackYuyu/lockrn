@@ -50,9 +50,9 @@ export default class Authorize extends Component {
                                             }
                                         </View>
                                         <View style={styles.info}>
-                                            <Text style={styles.bottomText}>事由：面试</Text>
+                                            <Text style={styles.bottomText}>事由：{item.remark}</Text>
                                             <Text style={styles.bottomText}>届时可能需要使用 <Text
-                                                style={styles.lock}>307室大门</Text> 的权限是否同意授权 </Text>
+                                                style={styles.lock}>公司大门和楼栋大门  </Text> 的权限是否同意授权 </Text>
                                         </View>
                                     </View>
 

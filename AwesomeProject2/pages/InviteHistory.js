@@ -85,10 +85,7 @@ export default class InviteHistory extends Component {
                         <Text style={{fontSize: 15, color: "#666"}}>{item.companyRemark}</Text>
                     </View>
                     <View style={styles.cardRight}>
-                        <Image
-                            // source={{uri: 'http://f.hiphotos.baidu.com/image/pic/item/fd039245d688d43f325fa8ab731ed21b0ff43bf0.jpg'}}
-                            style={{width: 95, height: 95}}
-                        />
+                        <Text  style={{fontSize:18,color:"#FF008C"}}>已邀约</Text>
 
                     </View>
 
