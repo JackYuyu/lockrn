@@ -12,3 +12,4 @@ const distance = 0.0;
 const mylat = 0.0;
 const mylon = 0.0;
 const lockName = "";
+const lockId = "";

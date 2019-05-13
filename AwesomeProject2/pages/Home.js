@@ -543,6 +543,7 @@ export default class Home extends Component {
                     this.props.navigation.navigate('OpenDoor')
                     console.log(item)
                     Global.lockName = item.name
+                    Global.lockId = item.id
                 }}>
                 <View style={{
                     backgroundColor: "#fff",

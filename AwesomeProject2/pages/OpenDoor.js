@@ -64,7 +64,7 @@ export default class OpenDoor extends Component {
 
     openClock() {
         let REQUEST_URL = `${Global.baseUrl}lock/app/longOpen/saveByLockId`;
-        let params = {"lockId": 19};
+        let params = {"lockId": Global.lockId};
         console.log(params);
         fetch(REQUEST_URL, {
             method: 'POST',
@@ -100,7 +100,7 @@ export default class OpenDoor extends Component {
 
     queryLock() {
         let REQUEST_URL = `${Global.baseUrl}lock/app/longOpenDoor/queryLongOpenDoorList`;
-        let params = {"lockId": 6};
+        let params = {"lockId": Global.lockId};
         console.log(params);
         fetch(REQUEST_URL, {
             method: 'POST',
