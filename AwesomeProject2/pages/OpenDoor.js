@@ -54,7 +54,7 @@ export default class OpenDoor extends Component {
 
                     </ImageBackground>
 
-                    <Text style={styles.title}>307室大门 </Text>
+                    <Text style={styles.title}>{Global.lockName}大门 </Text>
                     <Text style={styles.status}> {this.state.doorState} </Text>
 
                 </ImageBackground>
@@ -64,7 +64,7 @@ export default class OpenDoor extends Component {
 
     openClock() {
         let REQUEST_URL = `${Global.baseUrl}lock/app/longOpen/saveByLockId`;
-        let params = {"lockId": 6};
+        let params = {"lockId": 19};
         console.log(params);
         fetch(REQUEST_URL, {
             method: 'POST',

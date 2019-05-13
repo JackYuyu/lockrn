@@ -97,7 +97,7 @@ export default class Personal extends Component {
                             />
                             <Input
                                 editable={true}
-                                inputStyle={styles.input}
+                                inputStyle={styles.inputPhone}
                                 value={this.state.mobile}
                                 onChangeText={(text) => this.setState({mobile: text})}
                                 leftIcon={
@@ -217,6 +217,13 @@ const styles = StyleSheet.create({
     },
     input: {
         color: "#666",
+        borderColor: "#fff",
+        fontSize: 17,
+        lineHeight: 22
+
+    },
+    inputPhone: {
+        color: "blue",
         borderColor: "#fff",
         fontSize: 17,
         lineHeight: 22

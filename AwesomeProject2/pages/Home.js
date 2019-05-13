@@ -535,6 +535,8 @@ export default class Home extends Component {
             <TouchableOpacity
                 onPress={() => {
                     this.props.navigation.navigate('OpenDoor')
+                    console.log(item)
+                    Global.lockName = item.name
                 }}>
                 <View style={{
                     backgroundColor: "#fff",
