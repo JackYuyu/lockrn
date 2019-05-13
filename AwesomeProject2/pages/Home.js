@@ -122,7 +122,7 @@ export default class Home extends Component {
                 if (data === true) {
                     this.beginWatch();
                 } else {
-                    this.requestCarmeraPermission()
+                    this.requestLocationPermission()
                 }
             }).catch((err) => {
             })
@@ -130,7 +130,7 @@ export default class Home extends Component {
         }
     }
 
-    async requestCarmeraPermission() {
+    async requestLocationPermission() {
         try {
             const granted = await PermissionsAndroid.request(
                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
@@ -139,6 +139,9 @@ export default class Home extends Component {
                     'message': '我们需要获取您的位置权限实现打卡功能。'
                 }
             );
+            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                this.beginWatch();
+            }
         } catch (err) {
         }
     }
@@ -232,6 +235,9 @@ export default class Home extends Component {
                     "\n时间戳：" + location.timestamp;
                 Global.mylon = location.coords.longitude
                 Global.mylat = location.coords.latitude
+                if (this.state.centreList.length > 0) {
+                    this.geoDistance(this.state.centreList[0].lat, this.state.centreList[0].lon, Global.mylat, Global.mylon)
+                }
                 // Alert.alert(result);
             },
             error => {
