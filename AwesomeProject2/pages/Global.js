@@ -11,5 +11,5 @@ const token ="";
 const distance = 0.0;
 const mylat = 0.0;
 const mylon = 0.0;
-const lockName = "";
-const lockId = "";
+const lockName = "";//当前锁名字
+const lockId = "";//当前锁的id

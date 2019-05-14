@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {AppRegistry, StyleSheet, Text, View, ScrollView, SafeAreaView, FlatList} from 'react-native';
+import {AppRegistry, StyleSheet, Text, View, ScrollView, SafeAreaView, FlatList, DeviceEventEmitter} from 'react-native';
 import {Divider} from 'react-native-elements'
 import {Button} from 'react-native-elements';
 import * as ScreenUtil from "../utils/ScreenUtil"
@@ -9,8 +9,17 @@ import {Toast} from "../utils/Toast";
 
 export default class Authorize extends Component {
 
-    componentDidMount() {
-        this.loadData();
+        componentDidMount() {
+            this.subscription = DeviceEventEmitter.addListener('StartAnswer', () => {
+                // do something
+                this.loadData();
+
+            })
+    }
+
+    // 3.移除监听
+    componentWillUnmount() {
+        this.subscription.remove()
     }
 
     state = {

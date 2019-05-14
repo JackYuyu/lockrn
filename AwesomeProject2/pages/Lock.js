@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {SafeAreaView, StyleSheet, View} from 'react-native';
+import {SafeAreaView, StyleSheet, View, DeviceEventEmitter} from 'react-native';
 import ScrollableTabView, {DefaultTabBar} from 'react-native-scrollable-tab-view';
 import Apply from "../pages/Apply"
 import Authorize from "../pages/Authorize"
@@ -25,6 +25,11 @@ export default class Lock extends Component {
                         tabBarInactiveTextColor='#0499FF'
                         tabBarTextStyle={{fontSize: 14}}
                         locked={false}
+                        onChangeTab={(obj) => {
+                            console.log('current index ： ' + obj.i)
+                            if (obj.i === 1)
+                                DeviceEventEmitter.emit("StartAnswer")
+                        }}
                     >
                         <View tabLabel='访客邀约'>
                             <Apply navigation={this.props.navigation}/>
