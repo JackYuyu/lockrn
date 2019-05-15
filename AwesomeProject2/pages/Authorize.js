@@ -23,11 +23,7 @@ export default class Authorize extends Component {
     }
 
     state = {
-        data: [{
-            createTime: "2019-04-18 16:56:50",
-            id: 2,
-            visitorName: "12312321"
-        }]
+        data: []
     };
 
     render() {
@@ -41,13 +37,16 @@ export default class Authorize extends Component {
                     <FlatList
                         data={this.state.data}
                         renderItem={({item}) => {
-                            let time = item.createTime.substring(0, item.createTime.length - 3);
+                            let time = item.startDate.substring(0, item.startDate.length - 3);
+                            let time1 = item.endDate.substring(0, item.endDate.length - 3);
+
                             return (
                                 <View style={styles.card}>
                                     <View style={styles.cardWarper}>
                                         <View style={styles.info}>
                                             <Text style={styles.visityTitle}>{item.visitorName}正在申请拜访</Text>
-                                            <Text style={styles.visityTime}>时间：{time}</Text>
+                                            <Text style={styles.visityTime}>开始时间：{time}</Text>
+                                            <Text style={styles.visityTime}>结束时间：{time1}</Text>
                                         </View>
                                         <View style={{flexDirection: 'row', overflow: "hidden", marginBottom: 15}}>
                                             {
