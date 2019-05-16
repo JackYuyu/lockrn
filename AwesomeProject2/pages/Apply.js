@@ -53,8 +53,8 @@ export default class Apply extends Component {
         } else {
             if (this.state.date === '') {
                 Toast.show('请先选择日期')
-            } else if (this.state.isToday && date.getTime() - currentTime.getTime() < 30 * 60 * 1000) {
-                Toast.show('拜访需在半小时以后')
+            } else if (this.state.isToday && date.getTime() - currentTime.getTime() < 0) {
+                Toast.show('拜访需在当前以后')
             } else {
                 let hour = date.getHours();
                 let minutes = date.getMinutes();
