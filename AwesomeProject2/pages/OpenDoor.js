@@ -63,7 +63,7 @@ export default class OpenDoor extends Component {
     }
 
     openClock() {
-        let REQUEST_URL = `${Global.baseUrl}lock/app/wechat/saveByLockId`;
+        let REQUEST_URL = `${Global.baseUrl}lock/app/longOpen/saveByLockId`;
         let params = {"lockId": Global.lockId};
         console.log(params);
         fetch(REQUEST_URL, {
