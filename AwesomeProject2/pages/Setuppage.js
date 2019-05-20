@@ -25,7 +25,7 @@ export default class Setuppage extends Component {
 
     componentDidMount() {
         this.animate();
-        Global.baseUrl = "http://101.69.120.244:8085/";
+        Global.baseUrl = "https://door.zhiliaolink.com/";
         // Global.baseUrl = "http://192.168.0.137:8085/";
         AsyncStorage.getItem("token", (error, result) => {
             console.log(error);
