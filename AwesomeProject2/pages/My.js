@@ -27,18 +27,26 @@ export default class My extends Component {
             address: "",
             avatar: "",
             msgNum: "",
+            enter: false,
         };
     }
 
     componentDidMount() {
         this.loadData();
         this.getMsgNum();
+
     }
     // 注册监听
     componentWillMount() {
 //监听从购物车返回
         this.backFromShopListener = DeviceEventEmitter.addListener('TNBackFromShopNotification', () => {
-            this.getMsgNum();
+            this.props.navigation.navigate('My')
+
+            // this.getMsgNum();
+            // if (this.state.enter) {
+            //     console.log("xxx")
+            //     // this.props.navigation.navigate('My')
+            // }
         });
     }
 

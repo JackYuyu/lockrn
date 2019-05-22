@@ -4,12 +4,14 @@ import {View, TextInput, TouchableOpacity, StyleSheet, SafeAreaView} from 'react
 import {Button} from 'react-native-elements';
 import * as ScreenUtil from "../utils/ScreenUtil";
 import Global from './Global';
+import {Toast} from "../utils/Toast";
 
 export default class UselessTextInputMultiline extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            height: 100
+            height: 100,
+            text: "",
         }
     }
 
@@ -32,6 +34,12 @@ export default class UselessTextInputMultiline extends Component {
                             multiline={true}
                             ref={textInput => this.TextInput = textInput}
                             style={[{paddingVertical: 0, paddingLeft: 5, fontSize: 16, maxHeight: 240,color:"#666"}]}
+                            onChangeText={(text)=>{
+                                this.setState({
+                                    text: text,
+                                });
+
+                            }}
                         />
                     </TouchableOpacity>
 
@@ -59,7 +67,7 @@ export default class UselessTextInputMultiline extends Component {
     loadSave(){
 
         let REQUEST_URL = `${Global.baseUrl}lock/app/feedback/save`;
-        let params = {"text":"1asdfasdfdsf"};
+        let params = {"text":this.state.text};
         console.log(params)
         fetch(REQUEST_URL, {
             method: 'POST',
@@ -76,6 +84,7 @@ export default class UselessTextInputMultiline extends Component {
             }
         }).then((json) => {
             console.log(json)
+            Toast.show(`提交成功`);
 
         }).catch((error) => {
             console.error(error);

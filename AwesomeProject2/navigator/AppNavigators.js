@@ -1,4 +1,6 @@
 import React from 'react';
+import {DeviceEventEmitter} from 'react-native';
+
 import {
     createAppContainer,
     createStackNavigator,
@@ -203,6 +205,33 @@ const BottomTabNavigator = createBottomTabNavigator({
         screen: MyStack,
     },
 });
+var count =0;
+BottomTabNavigator.navigationOptions = ({ navigation }) => {
+
+    const { routeName } = navigation.state.routes[navigation.state.index];
+    var rou = navigation.state.routes[navigation.state.index];
+
+    // You can do whatever you like here to pick the title based on the route name
+    const headerTitle = routeName;
+
+    console.log(rou)
+    // console.log(rou.index)
+    if (rou.isTransitioning)
+    {
+        count++
+    }
+    console.log(count)
+            if (!rou.isTransitioning && rou.index === 1) {
+                if (count===0){
+                    DeviceEventEmitter.emit('TNBackFromShopNotification', {});
+
+                }
+                count=0;
+            }
+    return {
+        headerTitle,
+    };
+};
 
 let SwitchNavigator = createSwitchNavigator({
     Setuppage: {
