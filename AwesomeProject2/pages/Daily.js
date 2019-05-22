@@ -15,6 +15,7 @@ import DateTimePicker from 'react-native-modal-datetime-picker';
 import Global from "./Global";
 import moment from "moment";
 import 'moment/locale/zh-cn';
+import PickerData from "./Picker";
 
 export default class Daily extends Component {
     static navigationOptions = {
@@ -107,10 +108,30 @@ export default class Daily extends Component {
                             </View>
 
                         </View>
-                        <DateTimePicker
-                            isVisible={this.state.isDateTimePickerVisible}
-                            onConfirm={this._handleDatePicked}
-                            onCancel={this._hideDateTimePicker}
+
+                        <PickerData
+                            visible={this.state.isDateTimePickerVisible}
+                            onCancel={
+                                () => {
+                                    this.setState({isDateTimePickerVisible: false});
+                                    return null;
+                                }
+                            }
+                            onComfig={
+                                (time) => {
+                                    console.log(time)
+                                    this.getMonthData(time.substring(0,4), time.substring(4,6));
+
+                                    this.setState({isDateTimePickerVisible: false});
+                                    return null;
+                                }
+                            }
+                            onRequestClose={
+                            () => {
+                                this.setState({isDateTimePickerVisible: false});
+                                return null;
+                            }
+                        }
                         />
 
 
