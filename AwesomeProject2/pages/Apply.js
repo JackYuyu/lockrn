@@ -213,6 +213,7 @@ export default class Apply extends Component {
             }).then((json) => {
                 console.log(json);
                 Toast.show('已发出邀约，等待对方接受');
+                    this.props.navigation.navigate('InviteHistory')
             }).catch((error) => {
                 console.error(error);
             });

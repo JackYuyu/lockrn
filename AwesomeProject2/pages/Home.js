@@ -424,7 +424,7 @@ export default class Home extends Component {
                                 <Input
                                     inputStyle={{color: "#fff"}}
                                     underlineColorAndroid="transparent"  //android需要设置下划线为透明才能去掉下划线
-                                    placeholder='搜索门锁...'
+                                    placeholder='搜索楼宇...'
                                     containerStyle={styles.search}
                                     autoFocus={false}
                                     leftIcon={{type: 'font-awesome', name: 'search', color: "#fff"}}/>

@@ -88,7 +88,6 @@ export default class Daily extends Component {
                                 <Text style={styles.total}>{this.state.attendanceWeek}天</Text>
                             </View>
 
-                            <Text style={styles.desc}>正常出勤5天</Text>
                         </View>
                         <View style={{overflow: "hidden"}}>
                             {
@@ -107,7 +106,6 @@ export default class Daily extends Component {
                                 <Text style={styles.total}>{this.state.attendanceMonth}天</Text>
                             </View>
 
-                            <Text style={styles.desc}>正常出勤22天</Text>
                         </View>
                         <DateTimePicker
                             isVisible={this.state.isDateTimePickerVisible}
