@@ -5,11 +5,12 @@ import {Image,Input,Icon,Button} from "react-native-elements";
 import LinearGradient from 'react-native-linear-gradient'
 import * as ScreenUtil from "../utils/ScreenUtil";
 import {Toast} from "../utils/Toast";
+import GainIdentify from "./GainIdentify";
 
 
 export default class Login extends Component {
     static navigationOptions = {
-        header: null
+        header: null,
     };
 
     constructor(props){
@@ -49,9 +50,8 @@ export default class Login extends Component {
 
                         >
                         <LinearGradient colors={["#6102FC","#0499FF"]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} locations={[0, 1]} style={styles.yanzhen}>
-                            <Text style={styles.buttonText}>
-                                获取验证码
-                            </Text>
+                            <GainIdentify time={60} action={this.gainIdentify.bind(this)}/>
+
                         </LinearGradient>
                         </TouchableOpacity>
 
@@ -89,7 +89,10 @@ export default class Login extends Component {
         </SafeAreaView>
         );
     }
-
+    gainIdentify(){
+        console.log("获取验证码方法");
+        this.messagePress();
+    }
     //登录请求
     loginPress(){
         if (!this.state.password) {

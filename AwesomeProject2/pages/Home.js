@@ -431,7 +431,7 @@ export default class Home extends Component {
                                 <View style={styles.contentContainer}>
                                     <ScrollView
                                         horizontal={true}
-                                        scrollEnabled={false}
+                                        scrollEnabled={true}
                                         showsHorizontalScrollIndicator={false}
                                         ref="scrollView">
                                         {

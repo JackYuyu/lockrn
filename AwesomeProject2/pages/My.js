@@ -231,6 +231,25 @@ export default class My extends Component {
                                 title="关于我们"
                                 subtitle={null}
                             />
+                            <ListItem
+                                bottomDivider={true}
+                                chevron={true}
+                                onPress={() => {
+                                    this.props.navigation.navigate('Login')
+                                    AsyncStorage.removeItem("token", (error, result) => {
+                                        console.log(error);
+                                    });
+                                    Global.token=""
+                                }}
+                                leftAvatar={
+                                    <Image
+                                        source={require("../static/my/person.png")}
+                                        style={{width: 26, height: 26}}
+                                    />
+                                }
+                                title="退出登录"
+                                subtitle={null}
+                            />
 
 
                         </View>
