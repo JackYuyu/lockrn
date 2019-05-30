@@ -173,7 +173,7 @@ export default class Daily extends Component {
                                 style={{width: 10, height: 10, marginRight: 15}}
                             />
                             <Text
-                                style={{fontSize: 14, color: "#999999"}}>{Daily.getTime(item.morningTime, '上 午')}</Text>
+                                style={{fontSize: 14, color: "#999999"}}>{Daily.getTime(item.morningTime, '上 班')}</Text>
                         </View>
                         <View style={styles.title_detail}>
                             <Image
@@ -183,7 +183,7 @@ export default class Daily extends Component {
                             <Text style={{
                                 fontSize: 14,
                                 color: "#999999"
-                            }}>{Daily.getTime(item.afternoonTime, '下 午')}</Text>
+                            }}>{Daily.getTime(item.afternoonTime, '下 班')}</Text>
                         </View>
                     </View>
                 </View>
@@ -205,9 +205,6 @@ export default class Daily extends Component {
             let date = moment(time).toDate();
             let hours = date.getHours();
             let minutes = date.getMinutes();
-            if (interval === '下 午') {
-                hours = hours - 12;
-            }
             if (hours < 10) {
                 hours = "0" + hours
             }
