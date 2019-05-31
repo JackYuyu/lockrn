@@ -36,24 +36,6 @@ export default class My extends Component {
         this.getMsgNum();
 
     }
-    // 注册监听
-    componentWillMount() {
-//监听从购物车返回
-        this.backFromShopListener = DeviceEventEmitter.addListener('TNBackFromShopNotification', () => {
-            this.props.navigation.navigate('My')
-
-            // this.getMsgNum();
-            // if (this.state.enter) {
-            //     console.log("xxx")
-            //     // this.props.navigation.navigate('My')
-            // }
-        });
-    }
-
-// 移除监听
-    componentWillUnmount() {
-        this.backFromShopListener && bridge.removeEventEmitterListener(this.backFromShopListener);
-    }
 
     render() {
         return (
