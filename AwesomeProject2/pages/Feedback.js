@@ -19,56 +19,63 @@ export default class UselessTextInputMultiline extends Component {
     render() {
 
         return (
-        <SafeAreaView style={{flex:1}}>
-            <View style={styles.container}>
-                <View style={styles.msgbox}>
-                    <TouchableOpacity
-                        activeOpacity={1}
-                        onPress={() => this.TextInput.focus()}
-                        style={{height: 260,padding: 10}}
-                    >
-                        <TextInput
-                            placeholder={'请输入您宝贵的意见'}
-                            placeholderTextColor={'#bbbbbb'}
-                            underlineColorAndroid={'transparent'}
-                            multiline={true}
-                            ref={textInput => this.TextInput = textInput}
-                            style={[{paddingVertical: 0, paddingLeft: 5, fontSize: 16, maxHeight: 240,color:"#666"}]}
-                            onChangeText={(text)=>{
-                                this.setState({
-                                    text: text,
-                                });
+            <SafeAreaView style={{flex: 1}}>
+                <View style={styles.container}>
+                    <View style={styles.msgbox}>
+                        <TouchableOpacity
+                            activeOpacity={1}
+                            onPress={() => this.TextInput.focus()}
+                            style={{height: 260, padding: 10}}
+                        >
+                            <TextInput
+                                placeholder={'请输入您宝贵的意见'}
+                                placeholderTextColor={'#bbbbbb'}
+                                underlineColorAndroid={'transparent'}
+                                multiline={true}
+                                ref={textInput => this.TextInput = textInput}
+                                style={[{
+                                    paddingVertical: 0,
+                                    paddingLeft: 5,
+                                    fontSize: 16,
+                                    maxHeight: 240,
+                                    color: "#666"
+                                }]}
+                                onChangeText={(text) => {
+                                    this.setState({
+                                        text: text,
+                                    });
 
-                            }}
-                        />
-                    </TouchableOpacity>
+                                }}
+                            />
+                        </TouchableOpacity>
 
-                    <View style={styles.btns}>
-                        <Button
-                            title="取消"
-                            buttonStyle={styles.butn1}
-                        />
-                        <Button
-                            title="提交"
-                            buttonStyle={styles.butn2}
-                            onPress={() => {
-                                this.loadSave()
-                                // this.props.navigation.navigate('Main')
-                            }}
-                        />
+                        <View style={styles.btns}>
+                            <Button
+                                title="取消"
+                                buttonStyle={styles.butn1}
+                            />
+                            <Button
+                                title="提交"
+                                buttonStyle={styles.butn2}
+                                onPress={() => {
+                                    this.loadSave()
+                                    // this.props.navigation.navigate('Main')
+                                }}
+                            />
+
+                        </View>
 
                     </View>
-
                 </View>
-            </View>
-        </SafeAreaView>
+            </SafeAreaView>
         );
     }
-    loadSave(){
+
+    loadSave() {
 
         let REQUEST_URL = `${Global.baseUrl}lock/app/feedback/save`;
-        let params = {"text":this.state.text};
-        console.log(params)
+        let params = {"text": this.state.text};
+        console.log(params);
         fetch(REQUEST_URL, {
             method: 'POST',
             headers: {
@@ -79,13 +86,13 @@ export default class UselessTextInputMultiline extends Component {
             body: JSON.stringify(params)
         }).then((response) => {
             if (response.ok) {
-                console.log(response)
+                console.log(response);
                 return response.json();
             }
         }).then((json) => {
-            console.log(json)
+            console.log(json);
             Toast.show(`提交成功`);
-
+            this.props.navigation.goBack()
         }).catch((error) => {
             console.error(error);
         });
@@ -94,28 +101,28 @@ export default class UselessTextInputMultiline extends Component {
 }
 
 const styles = StyleSheet.create({
-    container:{
-        flex:1,
-        backgroundColor:"#f4f4f4",
-        padding:20
+    container: {
+        flex: 1,
+        backgroundColor: "#f4f4f4",
+        padding: 20
     },
-    msgbox:{
+    msgbox: {
         backgroundColor: "#fff",
-        borderRadius:10
+        borderRadius: 10
     },
-    btns:{
-        flexDirection:"row"
+    btns: {
+        flexDirection: "row"
     },
-    butn1:{
-        width:(ScreenUtil.deviceWidth-40)/2,
-        backgroundColor:"#D3E2F1",
-        color:"#4B4D68",
-        borderBottomLeftRadius:10
+    butn1: {
+        width: (ScreenUtil.deviceWidth - 40) / 2,
+        backgroundColor: "#D3E2F1",
+        color: "#4B4D68",
+        borderBottomLeftRadius: 10
 
     },
-    butn2:{
-        width:(ScreenUtil.deviceWidth-40)/2,
-        borderBottomRightRadius:10
+    butn2: {
+        width: (ScreenUtil.deviceWidth - 40) / 2,
+        borderBottomRightRadius: 10
     },
 
 });
