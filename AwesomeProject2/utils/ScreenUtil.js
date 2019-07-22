@@ -16,10 +16,8 @@
  PixelRatio.get() === 3          iPhone 6 plus , xxhdpi Android 设备 (480 dpi)
  PixelRatio.get() === 3.5        Nexus 6       */
 import React from 'react';
-import {
-    Dimensions,
-   PixelRatio,
-} from 'react-native';
+import {Dimensions, PixelRatio,} from 'react-native';
+
 export const deviceWidth = Dimensions.get('window').width;      //设备的宽度
 export const deviceHeight = Dimensions.get('window').height;    //设备的高度
 let fontScale = PixelRatio.getFontScale();                      //返回字体大小缩放比例
@@ -29,14 +27,27 @@ const defaultPixel = 2;                           //iphone6的像素密度
 const w2 = 750 / defaultPixel;
 const h2 = 1334 / defaultPixel;
 const scale = Math.min(deviceHeight / h2, deviceWidth / w2);   //获取缩放比例
+// 高保真的宽度和告诉
+const designWidth = 750.0;
+const designHeight = 1334.0;
+
+// 根据dp获取屏幕的px
+let screenPxW = PixelRatio.getPixelSizeForLayoutSize(deviceWidth);
+let screenPxH = PixelRatio.getPixelSizeForLayoutSize(deviceHeight);
+
 /**
- * 设置text为sp
- * @param size sp
- * return number dp
+ * 设置text
+ * @param size  px
+ * @returns {Number} dp
  */
-export function setSpText(size) {
-    size = Math.round((size * scale + 0.5) * pixelRatio / fontScale);
-    return size / defaultPixel;
+export function setSpText(size: Number) {
+    console.log("screenW======" + deviceWidth);
+    console.log("screenPxW======" + screenPxW);
+    let scaleWidth = deviceWidth / designWidth;
+    let scaleHeight = deviceHeight / designHeight;
+    let scale = Math.min(scaleWidth, scaleHeight);
+    size = Math.round(size * scale / fontScale + 0.5);
+    return size;
 }
 
 export function scaleSize(size) {

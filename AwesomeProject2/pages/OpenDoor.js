@@ -1,22 +1,12 @@
 import React, {Component} from 'react';
-import {
-    AppRegistry,
-    StyleSheet,
-    Text,
-    View,
-    ImageBackground,
-    StatusBar,
-    TouchableOpacity,
-    TouchableHighlight,
-    SafeAreaView
-} from 'react-native';
-import Global from "./Global";
+import {ImageBackground, SafeAreaView, StatusBar, StyleSheet, Text, TouchableOpacity} from 'react-native';
+import * as Global from "./Global";
 
 import * as ScreenUtil from "../utils/ScreenUtil"
 
 export default class OpenDoor extends Component {
     static navigationOptions = {
-        title: "BHC中环中心",
+        title: `${Global.lockCompany}`,
         headerStyle: {
             backgroundColor: 'transparent',
         },
@@ -136,7 +126,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#f4f4f4",
         alignItems: "center"
-
     },
     open: {
         width: ScreenUtil.deviceWidth,
@@ -148,8 +137,6 @@ const styles = StyleSheet.create({
     },
     buttonOp: {
         borderRadius: 30,
-
-
     },
 
     txtopen: {

@@ -1,28 +1,28 @@
 import React, {Component} from 'react';
 import {
-    AppRegistry,
-    StyleSheet,
-    Text,
-    View,
-    ImageBackground,
-    ScrollView,
+    Alert,
     FlatList,
-    TouchableOpacity,
-    StatusBar,
-    Alert, SafeAreaView,
+    ImageBackground,
     PermissionsAndroid,
     Platform,
-    DeviceEventEmitter
+    SafeAreaView,
+    ScrollView,
+    StatusBar,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import * as ScreenUtil from "../utils/ScreenUtil"
-import {Input, Image} from 'react-native-elements';
+import {scaleSize, setSpText, deviceWidth} from "../utils/ScreenUtil"
+import {Image, Input} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import Global from "./Global";
+import * as Global from "./Global";
 import {Toast} from '../utils/Toast'
+import JPushModule from 'jpush-react-native'
 
-var Geolocation = require('Geolocation');
+let Geolocation = require('Geolocation');
 //监听定位的id
-var watchID = null
+let watchID = null;
 export default class Home extends Component {
     static navigationOptions = {
         header: null,
@@ -94,24 +94,79 @@ export default class Home extends Component {
         } else {
             this.checkPermission();
         }
-        // this.beginWatch();
-        // setInterval(this.setTime,2000);
+
         setInterval(() => {
-            var today = new Date()
-            var h = today.getHours()
-            var m = today.getMinutes()
-            var s = today.getSeconds()
-// add a zero in front of numbers<10
+            let today = new Date();
+            let h = today.getHours();
+            let m = today.getMinutes();
             if (m < 10) {
                 m = "0" + m
-            }
-            if (s < 10) {
-                s = "0" + s
             }
             this.setState({
                 currentTime: h + ":" + m
             });
         }, 1000);
+
+        if (Platform.OS === 'android') {
+            JPushModule.initPush();
+            JPushModule.getInfo(map => {
+                this.setState({
+                    appkey: map.myAppKey,
+                    imei: map.myImei,
+                    package: map.myPackageName,
+                    deviceId: map.myDeviceId,
+                    version: map.myVersion
+                })
+            })
+        } else {
+            JPushModule.setupPush()
+        }
+
+        JPushModule.addReceiveCustomMsgListener(map => {
+            this.setState({pushMsg: map.content});
+            console.log('extras: ' + map.extras)
+        });
+        JPushModule.addReceiveNotificationListener(map => {
+            console.log('alertContent: ' + map.alertContent);
+            console.log('extras: ' + map.extras)
+        });
+
+        JPushModule.addReceiveOpenNotificationListener(map => {
+            console.log('Opening notification!');
+            console.log('map.extra: ' + map.extras);
+            console.log('jump to SecondActivity')
+        });
+
+        JPushModule.addGetRegistrationIdListener(registrationId => {
+            console.log('Device register succeed, registrationId ' + registrationId)
+        });
+        JPushModule.getRegistrationID(registrationId => {
+            console.log('Device register succeed, registrationId ' + registrationId);
+            this.setState({registrationId: registrationId});
+            this.updateMachingId()
+        })
+    }
+
+    updateMachingId() {
+        let REQUEST_URL = `${Global.baseUrl}lock/app/user/updateUser`;
+        let params = {"machingId": this.state.registrationId};
+        fetch(REQUEST_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'token': Global.token,
+            },
+            body: JSON.stringify(params)
+        }).then((response) => {
+            if (response.ok) {
+                console.log(response);
+                return response.json();
+            }
+        }).then((json) => {
+            console.log(json);
+        }).catch((error) => {
+            console.error(error);
+        });
     }
 
     checkPermission() {
@@ -153,7 +208,7 @@ export default class Home extends Component {
         if (this.state.centreList.length <= page) {
             page = 0
         }
-        let offset = page * 180;
+        let offset = page * scaleSize(600);
         let scrollView = this.refs.scrollView;
         scrollView.scrollTo({x: offset, y: 0, animated: true});
         var scrollView2 = this.refs.scrollView2;
@@ -170,13 +225,13 @@ export default class Home extends Component {
         let page = this.state.currentPage;
         page = page - 1;
         // 越界判断
-        if (page == -1) {
+        if (page === -1) {
             page = this.state.centreList.length - 1
         }
-        let offset = page * 180;
-        var scrollView = this.refs.scrollView;
+        let offset = page * scaleSize(600);
+        let scrollView = this.refs.scrollView;
         scrollView.scrollTo({x: offset, y: 0, animated: true});
-        var scrollView2 = this.refs.scrollView2;
+        let scrollView2 = this.refs.scrollView2;
         scrollView2.scrollTo({x: 0, y: 0, animated: true});
         this.setState({
             currentPage: page,
@@ -193,8 +248,8 @@ export default class Home extends Component {
         if (this.state.floorList.length <= page) {
             page = 0
         }
-        let offset = page * 140;
-        var scrollView = this.refs.scrollView2;
+        let offset = page * scaleSize(200);
+        let scrollView = this.refs.scrollView2;
         scrollView.scrollTo({x: offset, y: 0, animated: true});
         this.setState({
             currentPage2: page,
@@ -208,11 +263,11 @@ export default class Home extends Component {
         let page = this.state.currentPage2;
         page = page - 1;
         // 越界判断
-        if (page == -1) {
+        if (page === -1) {
             page = this.state.floorList.length - 1
         }
-        let offset = page * 140;
-        var scrollView = this.refs.scrollView2;
+        let offset = page * scaleSize(200);
+        let scrollView = this.refs.scrollView2;
         scrollView.scrollTo({x: offset, y: 0, animated: true});
         this.setState({
             currentPage2: page,
@@ -225,7 +280,7 @@ export default class Home extends Component {
     beginWatch() {
         watchID = Geolocation.watchPosition(
             location => {
-                var result = "速度：" + location.coords.speed +
+                let result = "速度：" + location.coords.speed +
                     "\n经度：" + location.coords.longitude +
                     "\n纬度：" + location.coords.latitude +
                     "\n准确度：" + location.coords.accuracy +
@@ -233,8 +288,8 @@ export default class Home extends Component {
                     "\n海拔：" + location.coords.altitude +
                     "\n海拔准确度：" + location.coords.altitudeAccuracy +
                     "\n时间戳：" + location.timestamp;
-                Global.mylon = location.coords.longitude
-                Global.mylat = location.coords.latitude
+                Global.mylon = location.coords.longitude;
+                Global.mylat = location.coords.latitude;
                 if (this.state.centreList.length > 0) {
                     this.geoDistance(this.state.centreList[0].lat, this.state.centreList[0].lon, Global.mylat, Global.mylon)
                 }
@@ -274,8 +329,7 @@ export default class Home extends Component {
                     centreList: json.centreList,
                     centreId: json.centreList[0].id
                 });
-                // alert(Global.mylat)
-                this.geoDistance(json.centreList[0].lat, json.centreList[0].lon, Global.mylat, Global.mylon)
+                this.geoDistance(json.centreList[0].lat, json.centreList[0].lon, Global.mylat, Global.mylon);
 
                 this.loadFloor();
             }
@@ -402,9 +456,8 @@ export default class Home extends Component {
         let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
         s = s * 6378.137;// EARTH_RADIUS;
         s = Math.round(s * 10000) / 10; //输出为米
-        console.log("distance:" + s)
-        Global.distance = s
-        return s;
+        console.log("distance:" + s);
+        Global.distance = s;
     }
 
     render() {
@@ -419,7 +472,7 @@ export default class Home extends Component {
                     <StatusBar backgroundColor={'rgba(4,153,255,0.8)'} translucent={false}/>
                     <ScrollView>
                         <ImageBackground source={require('../static/index.png')}
-                                         style={{height: ScreenUtil.scaleSize(510), width: ScreenUtil.deviceWidth}}>
+                                         style={{height: scaleSize(510), width: deviceWidth}}>
                             <View style={styles.wapper}>
                                 <Input
                                     inputStyle={{color: "#fff"}}
@@ -441,7 +494,8 @@ export default class Home extends Component {
                                                         <ImageBackground
                                                             source={require('../static/ld_icon.png')}
                                                             key={index}
-                                                            style={{width: 100, height: 100, alignItems: "center",}}>
+                                                            imageStyle={{width: 100, height: 100, marginLeft: 150}}
+                                                            style={{width: 400, height: 100, alignItems: "center",}}>
                                                             <Text style={{
                                                                 color: "#fff",
                                                                 fontSize: 20,
@@ -526,7 +580,7 @@ export default class Home extends Component {
                             <View style={styles.workbg}>
                                 <View style={styles.withC}>
                                     <Text style={styles.dakai}>打卡</Text>
-                                    <Text style={styles.lastTiem}>{this.state.currentTime}</Text>
+                                    <Text style={styles.lastTime}>{this.state.currentTime}</Text>
                                 </View>
                             </View>
                         </TouchableOpacity>
@@ -540,14 +594,15 @@ export default class Home extends Component {
         return (
             <TouchableOpacity
                 onPress={() => {
-                    this.props.navigation.navigate('OpenDoor')
-                    console.log(item)
-                    Global.lockName = item.name
+                    this.props.navigation.navigate('OpenDoor');
+                    console.log(item);
+                    Global.lockCompany = item.companyName.substring(0, 6);
+                    Global.lockName = item.name;
                     Global.lockId = item.id
                 }}>
                 <View style={{
                     backgroundColor: "#fff",
-                    width: 180,
+                    width: scaleSize(350),
                     marginHorizontal: 15,
                     marginBottom: 15,
                     alignItems: "center",
@@ -561,9 +616,9 @@ export default class Home extends Component {
                 }}>
                     <Image
                         source={require("../static/lock.png")}
-                        style={{width: 150, height: 150}}/>
+                        style={{width: scaleSize(250), height: scaleSize(250)}}/>
 
-                    <Text style={styles.doorname}>{item.companyName}</Text>
+                    <Text style={styles.doorname}>{item.companyName.substring(0, 6)}</Text>
                     <Text style={styles.compan}>{item.name}</Text>
 
                 </View>
@@ -592,7 +647,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
-        width: 180,
+        width: scaleSize(600),
         marginTop: 25,
         marginBottom: 5
 
@@ -601,24 +656,26 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         flexDirection: "row",
-        width: 140,
+        width: scaleSize(200),
         marginTop: 25,
 
     },
     swiperItem: {
-        width: 180,
+        width: scaleSize(600),
         alignItems: "center",
         justifyContent: "center",
     },
     swiperItem2: {
-        width: 140,
+        width: scaleSize(200),
         alignItems: "center",
         justifyContent: "center",
         position: "relative",
     },
     doorname: {
-        fontSize: 20,
+        fontSize: setSpText(25),
         color: "#40425F",
+        marginLeft: 5,
+        marginRight: 5
     },
     compan: {
         fontSize: 18,
@@ -634,8 +691,8 @@ const styles = StyleSheet.create({
 
     },
     workbg: {
-        width: 140,
-        height: 140,
+        width: scaleSize(200),
+        height: scaleSize(200),
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "blue",
@@ -648,10 +705,10 @@ const styles = StyleSheet.create({
         marginTop: 20
     },
     withC: {
-        width: 100,
-        height: 100,
+        width: scaleSize(150),
+        height: scaleSize(150),
         backgroundColor: "#fff",
-        borderRadius: 50,
+        borderRadius: scaleSize(100),
         alignItems: "center",
         justifyContent: "center",
     },

@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
-import {AppRegistry, StyleSheet, Text, View, SafeAreaView, TextInput, Picker} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {Picker, StyleSheet, Text, View} from 'react-native';
 
 import {Divider, Input} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient'
 import DateTimePicker from 'react-native-modal-datetime-picker';
-import Global from "./Global";
+import * as Global from "./Global";
 import moment from 'moment'
 import {Toast} from "../utils/Toast";
-import * as ScreenUtil from "../utils/ScreenUtil"
+import {scaleSize} from "../utils/ScreenUtil"
 
 
 export default class Apply extends Component {
@@ -242,21 +241,21 @@ const styles = StyleSheet.create({
     textStyle: {
         flexDirection: "row",
         width: "100%",
-        height: ScreenUtil.scaleSize(95),
-        paddingLeft: ScreenUtil.scaleSize(45),
+        height: scaleSize(95),
+        paddingLeft: scaleSize(45),
     },
     dateStar: {
         color: "red",
-        paddingTop: ScreenUtil.scaleSize(30),
+        paddingTop: scaleSize(30),
     },
     dateStyle: {
         flex: 1,
         marginLeft: 5,
         fontSize: 18,
-        paddingTop: ScreenUtil.scaleSize(25),
+        paddingTop: scaleSize(25),
     },
     otherText: {
-        paddingTop: ScreenUtil.scaleSize(30),
+        paddingTop: scaleSize(30),
         color: "#666"
     },
 
@@ -265,8 +264,8 @@ const styles = StyleSheet.create({
         fontSize: 18,
         width: "100%",
         height: 50,
-        paddingTop: ScreenUtil.scaleSize(23),
-        paddingLeft: ScreenUtil.scaleSize(250)
+        paddingTop: scaleSize(23),
+        paddingLeft: scaleSize(250)
     },
     linearGradient: {
         width: "80%",

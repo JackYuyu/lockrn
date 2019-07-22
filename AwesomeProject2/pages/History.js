@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
-import {AppRegistry, SafeAreaView, ScrollView, StyleSheet, Text, View} from 'react-native';
+import React, {Component} from 'react';
+import {SafeAreaView, StyleSheet, View} from 'react-native';
 import {Image, ListItem} from "react-native-elements";
+
 export default class History extends Component {
     render() {
         return (

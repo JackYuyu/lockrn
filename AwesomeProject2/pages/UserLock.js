@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
-import {AppRegistry, StyleSheet, Text, View, ScrollView, SafeAreaView} from 'react-native';
+import React, {Component} from 'react';
+import {SafeAreaView, ScrollView, StyleSheet, View} from 'react-native';
 import {Image, ListItem} from 'react-native-elements'
-import Global from "./Global";
-import {Toast} from '../utils/Toast'
+import * as Global from "./Global";
 
 export default class UserLock extends Component {
 

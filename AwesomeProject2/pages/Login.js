@@ -1,22 +1,10 @@
-import Global from './Global';
+import * as Global from './Global';
 import React, {Component} from 'react';
-import {
-    AppRegistry,
-    StyleSheet,
-    Text,
-    View,
-    TextInput,
-    TouchableOpacity,
-    SafeAreaView,
-    Alert,
-    AsyncStorage,
-    DeviceEventEmitter
-} from 'react-native';
-import {Image, Input, Icon, Button} from "react-native-elements";
+import {Alert, AsyncStorage, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Image} from "react-native-elements";
 import LinearGradient from 'react-native-linear-gradient'
-import * as ScreenUtil from "../utils/ScreenUtil";
+import {scaleSize, setSpText} from "../utils/ScreenUtil";
 import {Toast} from "../utils/Toast";
-import GainIdentify from "./GainIdentify";
 
 
 export default class Login extends Component {
@@ -27,6 +15,9 @@ export default class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            canClick: true,
+            time: 60,
+            timing: 60,
             mobile: "",
             password: ""
         };
@@ -38,58 +29,54 @@ export default class Login extends Component {
                 <View style={styles.container}>
                     <Image
                         source={require("../static/icon_logo.png")}
-                        style={{width: 150, height: 150, marginTop: 60}}
+                        style={{
+                            width: scaleSize(250),
+                            height: scaleSize(250),
+                            marginTop: scaleSize(100)
+                        }}
                     />
                     <Text style={{fontSize: 18, marginVertical: 10, color: "#00A7FF"}}>云邻智联</Text>
                     <View style={styles.login}>
-                        <View style={{flexDirection: "row", marginBottom: 25}}>
+                        <TextInput
+                            placeholder='手机号'
+                            style={styles.input} underlineColorAndroid='transparent'
+                            onChangeText={(text) => {
+                                this.setState({mobile: text});
+
+                                console.log(text)
+                            }}/>
+                        <View style={{flexDirection: "row", marginTop: 25}}>
                             <TextInput
-                                placeholder='手机号'
+                                placeholder='输入验证码'
                                 style={[styles.input, {marginRight: 15, flex: 1,}]} underlineColorAndroid='transparent'
                                 onChangeText={(text) => {
                                     this.setState({
-                                        mobile: text,
+                                        password: text,
                                     });
-
                                     console.log(text)
-                                }}
-                            />
-
+                                }}/>
                             <TouchableOpacity
+                                style={{width: scaleSize(200)}}
                                 onPress={() => {
-                                    this.messagePress()
-                                }}
-
-                            >
+                                    if (this.state.canClick) {
+                                        this.messagePress()
+                                    }
+                                }}>
                                 <LinearGradient colors={["#6102FC", "#0499FF"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}}
                                                 locations={[0, 1]} style={styles.yanzhen}>
-                                    <GainIdentify time={60} action={this.gainIdentify.bind(this)}/>
+                                    <Text style={styles.buttonText}>
+                                        {this.state.timing === this.state.time ? '获取验证码' : this.state.timing + 's'}
+                                    </Text>
 
                                 </LinearGradient>
                             </TouchableOpacity>
-
                         </View>
-                        <TextInput
-                            placeholder='输入验证码'
-                            style={styles.input} underlineColorAndroid='transparent'
-                            onChangeText={(text) => {
-                                this.setState({
-                                    password: text,
-                                });
-
-                                console.log(text)
-                            }}
-                        />
 
                         <TouchableOpacity
                             onPress={() => {
                                 this.loginPress()
-                                // this.props.navigation.navigate('Main')
-                            }}
-
-                        >
+                            }}>
                             <LinearGradient
-
                                 colors={["#6102FC", "#0499FF"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}}
                                 locations={[0, 1]} style={styles.button}>
                                 <Text style={styles.buttonText}>
@@ -104,23 +91,18 @@ export default class Login extends Component {
         );
     }
 
-    gainIdentify() {
-        console.log("获取验证码方法");
-        this.messagePress();
-    }
-
     //登录请求
     loginPress() {
         if (this.state.mobile.length !== 11) {
             Toast.show("请输入正确的手机号")
         }
         if (!this.state.password) {
-            Alert.alert("请输入验证码")
+            Alert.alert("请输入验证码");
             return
         }
         let REQUEST_URL = `${Global.baseUrl}lock/app/login`;
         let params = {"mobile": this.state.mobile, "code": this.state.password};
-        console.log(params)
+        console.log(params);
         fetch(REQUEST_URL, {
             method: 'POST',
             headers: {
@@ -138,13 +120,12 @@ export default class Login extends Component {
             if (json.code === 0) {
                 let tokens = json.token;
                 Global.token = json.token;
-                // Global.token="eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0ZGMwYThkMDY1YTkxMWU5YTUxOGZhMDMwMGJiODZmOSIsImlhdCI6MTU1NjA3Nzc4NSwiZXhwIjoxNTU2NjgyNTg1fQ.VXhKwBY3bSKikWSTzMXlU8DLqyaA4rTNEzr90kxhhplNz817Xdsq_xl7xDBFdsjlH2TVMp0SGvtmbd3DZhPtSg"
                 console.log(Global.token);
                 //存储token
                 AsyncStorage.setItem("token", tokens, (error) => {
                     console.log(error)
                 });
-                let a = AsyncStorage.getItem("token", (error) => {
+                AsyncStorage.getItem("token", (error) => {
                     console.log(error)
                 });
                 this.props.navigation.navigate('Main')
@@ -160,20 +141,42 @@ export default class Login extends Component {
     //发送短信
     messagePress() {
         if (!this.state.mobile) {
-            Alert.alert("请输入手机号")
+            Alert.alert("请输入手机号");
             return
         }
-        var REQUEST_URL = `${Global.baseUrl}lock/app/sendSms?mobile=${this.state.mobile}`;
+        this.setState({canClick: false});
+        let REQUEST_URL = `${Global.baseUrl}lock/app/sendSms?mobile=${this.state.mobile}`;
         fetch(REQUEST_URL)
             .then((response) => response.json())
             .then((responseJson) => {
-                console.log(responseJson)
+                console.log(responseJson);
+                if (responseJson.msg === 'success') {
+                    this.countDown()
+                } else {
+                    this.setState({canClick: true});
+                    Toast.show(responseJson.msg)
+                }
                 return responseJson;
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+            }).catch((error) => {
+            console.error(error);
+        });
 
+    }
+
+    countDown() {
+        if (this.state.timing === 0) {
+            this.setState({canClick: true});
+            this.setState({
+                timing: 60,
+            })
+        } else {
+            this.setState({
+                timing: this.state.timing - 1,
+            });
+            //这里使用 setTimeout 不是因为不知道setInterval 而是因为setInterval 固有的缺陷
+            // 相亲请移步到 https://www.jianshu.com/p/db9caa6bd2b1 中的超时调用一节
+            setTimeout(this.countDown.bind(this), 1000);
+        }
     }
 }
 const styles = StyleSheet.create({
@@ -195,18 +198,18 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         width: "100%",
         shadowColor: '#000',
-        fontSize: 16,
+        fontSize: setSpText(25),
         color: "#666",
         borderColor: "#ccc",
         borderWidth: 1,
         paddingHorizontal: 15,
-
     },
     buttonText: {
         color: "#fff",
-        fontSize: 16,
+        fontSize: scaleSize(25),
     },
     yanzhen: {
+        flex: 1,
         paddingHorizontal: 10,
         paddingVertical: 5,
         justifyContent: "center",
@@ -231,7 +234,5 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.3,
         shadowRadius: 2,
         elevation: 2,
-
     }
-
 });

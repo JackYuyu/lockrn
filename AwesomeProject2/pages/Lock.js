@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {SafeAreaView, StyleSheet, View, DeviceEventEmitter} from 'react-native';
+import {DeviceEventEmitter, SafeAreaView, StyleSheet, View} from 'react-native';
 import ScrollableTabView, {DefaultTabBar} from 'react-native-scrollable-tab-view';
 import Apply from "../pages/Apply"
 import Authorize from "../pages/Authorize"

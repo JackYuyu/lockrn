@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import {AppRegistry, StyleSheet, Text, View, ScrollView, SafeAreaView, RefreshControl, FlatList} from 'react-native';
+import {FlatList, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {Divider} from "react-native-elements";
-import {Image} from 'react-native-elements';
-import Global from "./Global";
+import * as Global from "./Global";
 
 var REQUEST_URL = "http://api.douban.com/v2/movie/top250?start=25&count=6"
 
@@ -42,7 +41,7 @@ export default class InviteHistory extends Component {
             }
         }).then((json) => {
             console.log(json);
-            this.setState({data:json.list})
+            this.setState({data: json.list})
         }).catch((error) => {
             console.error(error);
         });
@@ -85,7 +84,7 @@ export default class InviteHistory extends Component {
                         <Text style={{fontSize: 15, color: "#666"}}>{item.companyRemark}</Text>
                     </View>
                     <View style={styles.cardRight}>
-                        <Text  style={{fontSize:18,color:"#FF008C"}}>已邀约</Text>
+                        <Text style={{fontSize: 18, color: "#FF008C"}}>已邀约</Text>
 
                     </View>
 

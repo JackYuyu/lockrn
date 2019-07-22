@@ -15,39 +15,47 @@ import com.facebook.soloader.SoLoader;
 import java.util.Arrays;
 import java.util.List;
 
+import cn.jpush.reactnativejpush.JPushPackage;
+
 public class MainApplication extends Application implements ReactApplication {
 
-  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+    private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
+        // 设置为true将不弹出toast
+        private boolean SHUTDOWN_TOAST = true;
+        // 设置为true将不打印log
+        private boolean SHUTDOWN_LOG = false;
+
+        @Override
+        public boolean getUseDeveloperSupport() {
+            return BuildConfig.DEBUG;
+        }
+
+        @Override
+        protected List<ReactPackage> getPackages() {
+            return Arrays.<ReactPackage>asList(
+                    new MainReactPackage(),
+                    new LinearGradientPackage(),
+                    new ImagePickerPackage(),
+                    new VectorIconsPackage(),
+                    new RNGestureHandlerPackage(),
+                    new JPushPackage(SHUTDOWN_TOAST, SHUTDOWN_LOG)
+            );
+        }
+
+        @Override
+        protected String getJSMainModuleName() {
+            return "index";
+        }
+    };
+
     @Override
-    public boolean getUseDeveloperSupport() {
-      return BuildConfig.DEBUG;
+    public ReactNativeHost getReactNativeHost() {
+        return mReactNativeHost;
     }
 
     @Override
-    protected List<ReactPackage> getPackages() {
-      return Arrays.<ReactPackage>asList(
-          new MainReactPackage(),
-            new LinearGradientPackage(),
-            new ImagePickerPackage(),
-            new VectorIconsPackage(),
-            new RNGestureHandlerPackage()
-      );
+    public void onCreate() {
+        super.onCreate();
+        SoLoader.init(this, /* native exopackage */ false);
     }
-
-    @Override
-    protected String getJSMainModuleName() {
-      return "index";
-    }
-  };
-
-  @Override
-  public ReactNativeHost getReactNativeHost() {
-    return mReactNativeHost;
-  }
-
-  @Override
-  public void onCreate() {
-    super.onCreate();
-    SoLoader.init(this, /* native exopackage */ false);
-  }
 }

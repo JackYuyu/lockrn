@@ -1,18 +1,7 @@
 import React, {Component} from 'react';
-import {
-    AppRegistry,
-    StyleSheet,
-    Text,
-    View,
-    ScrollView,
-    SafeAreaView,
-    Alert,
-    FlatList,
-    TouchableOpacity
-} from 'react-native';
-import {Divider, Avatar, Image} from 'react-native-elements';
-import DateTimePicker from 'react-native-modal-datetime-picker';
-import Global from "./Global";
+import {Alert, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Divider, Image} from 'react-native-elements';
+import * as Global from "./Global";
 import moment from "moment";
 import 'moment/locale/zh-cn';
 import PickerData from "./Picker";

@@ -1,16 +1,6 @@
 import React, {Component} from 'react';
-import {
-    AppRegistry,
-    StyleSheet,
-    Text,
-    View,
-    ImageBackground,
-    StatusBar,
-    TouchableHighlight,
-    SafeAreaView, AsyncStorage
-} from 'react-native';
-import {Button} from 'react-native-elements';
-import Global from "./Global";
+import {AsyncStorage, ImageBackground, SafeAreaView, StatusBar, StyleSheet, Text, View} from 'react-native';
+import * as Global from "./Global";
 
 
 export default class Setuppage extends Component {
@@ -18,14 +8,13 @@ export default class Setuppage extends Component {
         super(props);
 
         this.state = {
-            time: 4,
+            time: 1,
         };
         this.animate = this.animate.bind(this)
     }
 
     componentDidMount() {
         this.animate();
-        Global.baseUrl = "https://door.zhiliaolink.com/";
         // Global.baseUrl = "http://192.168.0.137:8085/";
         AsyncStorage.getItem("token", (error, result) => {
             console.log(error);
@@ -42,7 +31,7 @@ export default class Setuppage extends Component {
     animate() {
         this.timerID = setInterval(() => {
                 let {time} = this.state;
-                if (time == 0) {
+                if (time === 0) {
                     clearInterval(this.timerID);
                     if (Global.token === undefined || Global.token === null || Global.token === "") {
                         this.props.navigation.navigate('Login')
@@ -52,10 +41,8 @@ export default class Setuppage extends Component {
                 }
                 time = time - 1;
                 this.setState({time})
-
             }, 1000
         );
-
     }
 
     render() {
@@ -66,15 +53,12 @@ export default class Setuppage extends Component {
                     <StatusBar hidden={true}/>
                     <ImageBackground source={require("../static/setup.png")} style={{width: '100%', height: '100%'}}>
 
-                        <View style={styles.progress}>
-                            <Text style={styles.text}>{this.state.time} s</Text>
-                        </View>
+                        {/*<View style={styles.progress}>*/}
+                            {/*<Text style={styles.text}>{this.state.time} s</Text>*/}
+                        {/*</View>*/}
 
                     </ImageBackground>
-
-
                 </View>
-
             </SafeAreaView>
         );
     }

@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {View, TextInput, TouchableOpacity, StyleSheet, SafeAreaView} from 'react-native';
+import {SafeAreaView, StyleSheet, TextInput, TouchableOpacity, View} from 'react-native';
 
 import {Button} from 'react-native-elements';
 import * as ScreenUtil from "../utils/ScreenUtil";
-import Global from './Global';
+import * as Global from './Global';
 import {Toast} from "../utils/Toast";
 
 export default class UselessTextInputMultiline extends Component {

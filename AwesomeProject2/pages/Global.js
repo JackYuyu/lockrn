@@ -1,15 +1,10 @@
-import {Dimensions,Platform,StatusBar,PixelRatio} from  'react-native';
-
-const {width, height} = Dimensions.get('window');
-const  OS = Platform.OS;
-const ios = (OS == 'ios');
-const android = (OS == 'android');
-const  isIPhoneX = (ios && height == 812 && width == 375);
-const  statusBarHeight = (ios ? (isIPhoneX ? 44 : 20) : StatusBar.currentHeight);
 //登录token
-const token ="";
-const distance = 0.0;
-const mylat = 0.0;
-const mylon = 0.0;
-const lockName = "";//当前锁名字
-const lockId = "";//当前锁的id
+export let token ="";
+export const baseUrl ="https://door.zhiliaolink.com/";
+// export const baseUrl ="http://192.168.0.137:8087/";
+export let distance = 0.0;
+export let mylat = 0.0;
+export let mylon = 0.0;
+export let lockCompany = "";//当前锁名字
+export let lockName = "";//当前锁名字
+export let lockId = "";//当前锁的id

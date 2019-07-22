@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
-import {AppRegistry, StyleSheet, Text, View, ScrollView, SafeAreaView, FlatList, DeviceEventEmitter} from 'react-native';
-import {Divider} from 'react-native-elements'
-import {Button} from 'react-native-elements';
+import {DeviceEventEmitter, FlatList, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Button, Divider} from 'react-native-elements'
 import * as ScreenUtil from "../utils/ScreenUtil"
-import Global from "./Global";
+import * as Global from "./Global";
 import {Toast} from "../utils/Toast";
 
 

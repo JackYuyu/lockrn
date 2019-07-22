@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import { Text, View,StyleSheet,Alert } from 'react-native';
+import React, {Component} from 'react';
+import {Alert, StyleSheet, Text, View} from 'react-native';
+
 var Geolocation = require('Geolocation');
 //监听定位的id
 var watchID = null

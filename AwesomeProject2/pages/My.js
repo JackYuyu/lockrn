@@ -1,18 +1,18 @@
 import React, {Component} from 'react';
 import {
-    AppRegistry,
+    AsyncStorage,
+    ImageBackground,
+    SafeAreaView,
+    ScrollView,
     StyleSheet,
     Text,
-    View,
-    ImageBackground,
-    ScrollView,
     TouchableOpacity,
-    SafeAreaView, AsyncStorage, DeviceEventEmitter
+    View
 } from 'react-native';
-import {ListItem, Card, Button, Icon, Avatar, Image, Badge} from 'react-native-elements'
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import * as ScreenUtil from "../utils/ScreenUtil";
-import Global from "./Global";
+import {Badge, Image, ListItem} from 'react-native-elements'
+import * as Global from "./Global";
+import {setSpText} from "../utils/ScreenUtil";
+
 export default class My extends Component {
     static navigationOptions = {
         header: null
@@ -43,13 +43,11 @@ export default class My extends Component {
                 <ScrollView>
                     <View style={styles.container}>
                         <View style={styles.bg}>
-                            <ImageBackground source={require('../static/my/my.png')} style={styles.person}
-                            >
+                            <ImageBackground source={require('../static/my/my.png')} style={styles.person}>
                                 <TouchableOpacity
                                     onPress={() => {
                                         this.props.navigation.navigate('Notify')
-                                    }}
-                                >
+                                    }}>
                                     <View style={{position: 'relative', height: 50,}}>
                                         <View style={{position: 'absolute', top: 15, right: 40}}>
                                             <Image
@@ -67,22 +65,20 @@ export default class My extends Component {
                                 </TouchableOpacity>
                                 <View style={styles.position}>
                                     <Image
-                                        source={require("../static/avater.png")}
-                                        style={{width: 120, height: 120}}
-                                    />
+                                        source={{uri: 'https://ss0.bdstatic.com/70cFuHSh_Q1YnxGkpoWK1HF6hhy/it/u=1479419211,3323294303&fm=27&gp=0.jpg'}}
+                                        style={{width: 120, height: 120}}/>
                                     <View style={styles.right}>
                                         <Text style={{fontSize: 20, fontWeight: "bold"}}>{this.state.name}</Text>
                                         <Text style={{
-                                            fontSize: 18,
+                                            fontSize: setSpText(25),
                                             color: "#444662",
                                             marginVertical: 5
-                                        }}>{this.state.company}</Text>
+                                        }}>{this.state.company.substring(0, 6)}</Text>
                                         <View style={{flexDirection: "row"}}>
 
                                             <Image
                                                 source={require("../static/my/shouji.png")}
-                                                style={{width: 12, height: 18, marginRight: 5}}
-                                            />
+                                                style={{width: 12, height: 18, marginRight: 5}}/>
 
                                             <Text style={{fontSize: 16, color: "#444662"}}>{this.state.mobile}</Text>
                                         </View>
@@ -217,26 +213,20 @@ export default class My extends Component {
                                 bottomDivider={true}
                                 chevron={true}
                                 onPress={() => {
-                                    this.props.navigation.navigate('Login')
+                                    this.props.navigation.navigate('Login');
                                     AsyncStorage.removeItem("token", (error, result) => {
                                         console.log(error);
                                     });
-                                    Global.token=""
+                                    Global.token = ""
                                 }}
                                 leftAvatar={
                                     <Image
                                         source={require("../static/my/person.png")}
-                                        style={{width: 26, height: 26}}
-                                    />
+                                        style={{width: 26, height: 26}}/>
                                 }
                                 title="退出登录"
-                                subtitle={null}
-                            />
-
-
+                                subtitle={null}/>
                         </View>
-
-
                     </View>
                 </ScrollView>
             </SafeAreaView>
@@ -260,7 +250,7 @@ export default class My extends Component {
             }
         }).then((json) => {
             console.log(json.user);
-            if (json.user !== undefined){
+            if (json.user !== undefined) {
                 this.setState(
                     {
                         name: json.user.name,

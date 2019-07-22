@@ -3,17 +3,8 @@
  * https://github.com/facebook/react-native
  */
 //jpush推送模块
-import React, { Component } from 'react'
-import {
-  Alert,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableHighlight,
-  View
-} from 'react-native'
+import React, {Component} from 'react'
+import {Alert, Platform, ScrollView, StyleSheet, Text, TextInput, TouchableHighlight, View} from 'react-native'
 
 import JPushModule from 'jpush-react-native'
 

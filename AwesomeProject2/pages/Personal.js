@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
-import {AppRegistry, StyleSheet, Text, View, Image, ScrollView, SafeAreaView, TouchableOpacity} from 'react-native';
-import {Avatar, Input, Button} from 'react-native-elements'
+import {SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Avatar, Input} from 'react-native-elements'
 import * as ScreenUtil from "../utils/ScreenUtil"
 import ImagePicker from 'react-native-image-picker';
 import LinearGradient from 'react-native-linear-gradient'
-import Global from "./Global";
+import * as Global from "./Global";
 
 import {Loading} from '../utils/Loading';
 

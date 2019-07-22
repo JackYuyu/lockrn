@@ -1,8 +1,7 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, SafeAreaView, FlatList,} from 'react-native';
-import {Divider} from "react-native-elements";
-import {Image} from 'react-native-elements';
-import Global from "./Global";
+import {FlatList, SafeAreaView, StyleSheet, Text, View,} from 'react-native';
+import {Divider, Image} from "react-native-elements";
+import * as Global from "./Global";
 import moment from "moment";
 
 export default class AuthorizeHistory extends Component {

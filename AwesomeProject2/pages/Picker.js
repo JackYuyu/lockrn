@@ -1,19 +1,10 @@
-import React, { PureComponent } from 'react';
-import {
-    View,
-    Picker,
-    StyleSheet,
-    Dimensions,
-    Modal,
-    TouchableOpacity,
-    Alert,
-
-    Text
-} from 'react-native';
-import Global from "./Global";
+import React, {PureComponent} from 'react';
+import {Alert, Dimensions, Modal, Picker, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import * as  Global from "./Global";
 
 // 默认获取本地时间
 const dataObj = new Date();
+
 class PickerData extends PureComponent {
     constructor(props) {
         super(props);
@@ -24,6 +15,7 @@ class PickerData extends PureComponent {
                 ('0' + (dataObj.getMonth() + 1)) : ((dataObj.getMonth() + 1) + ''),
         };
     }
+
 // 生成列表
 // start 开始时间
 // ender 结束时间
@@ -36,11 +28,11 @@ class PickerData extends PureComponent {
 // 月份碰到小于10的加0,例如07月
             if ((i + '').length <= 1) {
                 dealRow.push(
-                    <Picker.Item label={'0' + i + str} value={'0' + i} key={i} />
+                    <Picker.Item label={'0' + i + str} value={'0' + i} key={i}/>
                 );
             } else {
                 dealRow.push(
-                    <Picker.Item label={i + str} value={'' + i} key={i} />
+                    <Picker.Item label={i + str} value={'' + i} key={i}/>
                 );
             }
         }
@@ -64,14 +56,15 @@ class PickerData extends PureComponent {
         const yeartimeer = this.state.datetimeYear + this.state.datetimeMoth;
 // 用户点错月份
         if (yeartime < yeartimeer) {
-            Alert.alert('错误提示', '当月没有记录，请重新选择日期', [{ text: '确定' }]);
+            Alert.alert('错误提示', '当月没有记录，请重新选择日期', [{text: '确定'}]);
         } else {
 // 回调
             this.props.onComfig(yeartimeer);
         }
     };
+
     render() {
-        const { visible } = this.props;
+        const {visible} = this.props;
 
         return (
             <Modal
@@ -81,8 +74,8 @@ class PickerData extends PureComponent {
             >
                 <View style={styles.modelSelect}>
                     <View style={styles.ViewStyle}>
-                        <View style={{ borderBottomWidth: 1, borderBottomColor: 'rgb(75,139,249)', padding: 20 }}>
-                            <Text style={{ fontSize: 20, color: '#000' }}>
+                        <View style={{borderBottomWidth: 1, borderBottomColor: 'rgb(75,139,249)', padding: 20}}>
+                            <Text style={{fontSize: 20, color: '#000'}}>
                                 {this.state.datetimeYear + '年' + this.state.datetimeMoth + '月'}
                             </Text>
                         </View>
@@ -91,7 +84,9 @@ class PickerData extends PureComponent {
                                 prompt={'请选择年份'}
                                 mode="dialog"
                                 selectedValue={this.state.datetimeYear}
-                                onValueChange={(lang) => { this.setState({ datetimeYear: lang }); }}
+                                onValueChange={(lang) => {
+                                    this.setState({datetimeYear: lang});
+                                }}
                                 style={styles.switchStyle}
                             >
                                 {this._renderDeal(2016, dataObj.getFullYear() + 1, '年')}
@@ -100,23 +95,30 @@ class PickerData extends PureComponent {
                                 prompt={'请选择月份'}
                                 mode="dialog"
                                 selectedValue={this.state.datetimeMoth}
-                                onValueChange={(lang) => { this.setState({ datetimeMoth: lang }); }}
+                                onValueChange={(lang) => {
+                                    this.setState({datetimeMoth: lang});
+                                }}
                                 style={styles.switchStyle}
                             >
                                 {this._renderDeal(1, 13, '月')}
                             </Picker>
                         </View>
-                        <View style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: 'rgb(75,139,249)' }}>
+                        <View style={{flexDirection: 'row', borderTopWidth: 1, borderTopColor: 'rgb(75,139,249)'}}>
                             <TouchableOpacity onPress={() => this.props.onCancel()}>
-                                <View style={[styles.cancelStyle, { borderRightWidth: 1, borderRightColor: 'rgb(75,139,249)' }]}>
-                                    <Text style={{ fontSize: 16 }}>取消</Text>
+                                <View style={[styles.cancelStyle, {
+                                    borderRightWidth: 1,
+                                    borderRightColor: 'rgb(75,139,249)'
+                                }]}>
+                                    <Text style={{fontSize: 16}}>取消</Text>
                                 </View>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                onPress={() => { this.comfig(); }}
+                                onPress={() => {
+                                    this.comfig();
+                                }}
                             >
                                 <View style={styles.cancelStyle}>
-                                    <Text style={{ fontSize: 16, color: '#000' }}>确认</Text>
+                                    <Text style={{fontSize: 16, color: '#000'}}>确认</Text>
                                 </View>
                             </TouchableOpacity>
                         </View>
@@ -127,6 +129,7 @@ class PickerData extends PureComponent {
         );
     }
 }
+
 const styles = StyleSheet.create({
     main: {
         flex: 1,
