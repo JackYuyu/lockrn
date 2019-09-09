@@ -11,6 +11,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Home from "../pages/Home"
 import Lock from "../pages/Lock"
 import My from "../pages/My"
+import Sign from "../pages/Sign"
 import Personal from "../pages/Personal"
 import OpenDoor from "../pages/OpenDoor"
 import Daily from "../pages/Daily"
@@ -26,7 +27,6 @@ import Login from "../pages/Login"
 import Setuppage from "../pages/Setuppage"
 import App1 from "../pages/App1" //极光
 import Map from "../pages/Map" //定位
-import {Text} from "react-native-elements";
 
 // 底部导航
 const BottomTabNavigator = createBottomTabNavigator({
@@ -54,9 +54,21 @@ const BottomTabNavigator = createBottomTabNavigator({
                 />
             ),
             tabBarLabel: '访客',
-            header: <Text>dddd</Text>
         },
         screen: Lock,
+    },
+    Sign: {
+        navigationOptions: {
+            tabBarIcon: ({tintColor, focused,}) => (
+                <FontAwesome
+                    name={focused ? 'check-square' : 'check-square'}
+                    size={26}
+                    style={{color: tintColor}}
+                />
+            ),
+            tabBarLabel: '打卡',
+        },
+        screen: Sign,
     },
     MyStack: {
         navigationOptions: {
@@ -81,12 +93,12 @@ BottomTabNavigator.navigationOptions = ({navigation}) => {
     // You can do whatever you like here to pick the title based on the route name
     const headerTitle = routeName;
 
-    console.log(rou)
+    console.log(rou);
     // console.log(rou.index)
     if (rou.isTransitioning) {
         count++
     }
-    console.log(count)
+    console.log(count);
     if (!rou.isTransitioning && rou.index === 1) {
         if (count === 0) {
             DeviceEventEmitter.emit('TNBackFromShopNotification', {});
@@ -118,7 +130,7 @@ let homeNavigator = createStackNavigator({
     Daily: {
         screen: Daily,
         navigationOptions: {
-            title: "打开统计"
+            title: "打卡统计"
         }
     },
     About: {

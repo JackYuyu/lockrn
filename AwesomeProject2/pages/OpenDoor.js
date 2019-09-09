@@ -44,7 +44,7 @@ export default class OpenDoor extends Component {
 
                     </ImageBackground>
 
-                    <Text style={styles.title}>{Global.lockName}大门 </Text>
+                    <Text style={styles.title}>{Global.lockName}</Text>
                     <Text style={styles.status}> {this.state.doorState} </Text>
 
                 </ImageBackground>

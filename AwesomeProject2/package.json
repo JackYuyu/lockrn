@@ -1,5 +1,5 @@
 {
-  "name": "AwesomeProject",
+  "name": "云管家",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -19,6 +19,7 @@
     "react-native-root-siblings": "^3.1.7",
     "react-native-root-toast": "^3.0.2",
     "react-native-scrollable-tab-view": "^0.10.0",
+    "react-native-swiper": "^1.5.14",
     "react-native-vector-icons": "^6.4.2",
     "react-navigation": "^3.6.0"
   },

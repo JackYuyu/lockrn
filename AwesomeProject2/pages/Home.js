@@ -1,9 +1,6 @@
 import React, {Component} from 'react';
 import {
-    Alert,
-    FlatList,
     ImageBackground,
-    PermissionsAndroid,
     Platform,
     SafeAreaView,
     ScrollView,
@@ -13,12 +10,12 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import {scaleSize, setSpText, deviceWidth} from "../utils/ScreenUtil"
+import {deviceWidth, scaleSize} from "../utils/ScreenUtil"
 import {Image, Input} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Global from "./Global";
-import {Toast} from '../utils/Toast'
 import JPushModule from 'jpush-react-native'
+import Swiper from 'react-native-swiper';
 
 let Geolocation = require('Geolocation');
 //监听定位的id
@@ -35,66 +32,24 @@ export default class Home extends Component {
         this.prev = this.prev.bind(this);
         this.next2 = this.next2.bind(this);
         this.prev2 = this.prev2.bind(this);
-        this.geoDistance = this.geoDistance.bind(this);
 
         this.state = {
             currentPage: 0,
             currentPage2: 0,
-            centreList: [{
-                id: 1,
-                name: "云邻大楼1",
-            }, {
-                id: 2,
-                name: "云邻大楼2",
-            }, {
-                id: 3,
-                name: "云邻大楼3",
-            }, {
-                id: 4,
-                name: "云邻大楼4",
-            }],
-            floorList: [{
-                id: 1,
-                name: "1楼"
-            }, {
-                id: 2,
-                name: "2楼"
-            }, {
-                id: 3,
-                name: "3楼"
-            }, {
-                id: 5,
-                name: "4楼"
-            },],
-            lockList: [{
-                companyName: "云邻通讯",
-                id: 1,
-                name: "307大门"
-            }, {
-                companyName: "云邻通讯",
-                id: 2,
-                name: "307后门"
-            }, {
-                companyName: "云邻通讯",
-                id: 3,
-                name: "307前门"
-            }],
+            centreList: [],
+            floorList: [],
+            lockList: [],
             centreId: 1,
+            time: 5,
             floorId: 1,
             loadType: -1,//0加载楼层 门锁   1加载门锁
             distance: 0.0,//打卡距离
-            currentTime: ""
+            currentTime: "",
         }
     }
 
     componentDidMount() {
         this.loadData();
-        if (Platform.OS === 'ios') {
-            this.beginWatch();
-        } else {
-            this.checkPermission();
-        }
-
         setInterval(() => {
             let today = new Date();
             let h = today.getHours();
@@ -117,7 +72,7 @@ export default class Home extends Component {
                     deviceId: map.myDeviceId,
                     version: map.myVersion
                 })
-            })
+            });
         } else {
             JPushModule.setupPush()
         }
@@ -167,38 +122,6 @@ export default class Home extends Component {
         }).catch((error) => {
             console.error(error);
         });
-    }
-
-    checkPermission() {
-        try {
-            //返回Promise类型
-            const granted = PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION);
-            granted.then((data) => {
-                if (data === true) {
-                    this.beginWatch();
-                } else {
-                    this.requestLocationPermission()
-                }
-            }).catch((err) => {
-            })
-        } catch (err) {
-        }
-    }
-
-    async requestLocationPermission() {
-        try {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                {
-                    'title': '位置权限',
-                    'message': '我们需要获取您的位置权限实现打卡功能。'
-                }
-            );
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                this.beginWatch();
-            }
-        } catch (err) {
-        }
     }
 
     next() {
@@ -276,34 +199,27 @@ export default class Home extends Component {
         });
     }
 
-    //开始监听位置变化
-    beginWatch() {
-        watchID = Geolocation.watchPosition(
-            location => {
-                let result = "速度：" + location.coords.speed +
-                    "\n经度：" + location.coords.longitude +
-                    "\n纬度：" + location.coords.latitude +
-                    "\n准确度：" + location.coords.accuracy +
-                    "\n行进方向：" + location.coords.heading +
-                    "\n海拔：" + location.coords.altitude +
-                    "\n海拔准确度：" + location.coords.altitudeAccuracy +
-                    "\n时间戳：" + location.timestamp;
-                Global.mylon = location.coords.longitude;
-                Global.mylat = location.coords.latitude;
-                if (this.state.centreList.length > 0) {
-                    this.geoDistance(this.state.centreList[0].lat, this.state.centreList[0].lon, Global.mylat, Global.mylon)
-                }
-                // Alert.alert(result);
-            },
-            error => {
-                Alert.alert("获取位置失败：" + error)
+    searchCentre(text) {
+        if (text === "") {
+            return
+        }
+        for (let i = 0; i < this.state.centreList.length; i++) {
+            if (this.state.centreList[i].name.indexOf(text) >= 0) {
+                let page = i;
+                let offset = page * scaleSize(600);
+                let scrollView = this.refs.scrollView;
+                scrollView.scrollTo({x: offset, y: 0, animated: true});
+                var scrollView2 = this.refs.scrollView2;
+                scrollView2.scrollTo({x: 0, y: 0, animated: true});
+                this.setState({
+                    currentPage: page,
+                    centreId: this.state.centreList[page].id,
+                    currentPage2: 0,
+                    loadType: 0
+                });
+                return;
             }
-        );
-    }
-
-    //停止监听位置变化
-    stopWatch() {
-        Geolocation.clearWatch(watchID);
+        }
     }
 
     loadData() {
@@ -324,14 +240,26 @@ export default class Home extends Component {
             }
         }).then((json) => {
             console.log(json.centreList);
-            if (json.centreList !== undefined && json.centreList.length > 0) {
+            if (json.code === 0) {
+                this.setState({centreList: json.centreList});
+                if (json.centreList.length > 0) {
+                    this.setState({centreId: json.centreList[0].id});
+                    Global.lat = json.centreList[0].lat;
+                    Global.lon = json.centreList[0].lon;
+                    this.loadFloor();
+                } else {
+                    this.setState({
+                        centreList: [],
+                        floorList: [],
+                        lockList: [],
+                    })
+                }
+            } else {
                 this.setState({
-                    centreList: json.centreList,
-                    centreId: json.centreList[0].id
-                });
-                this.geoDistance(json.centreList[0].lat, json.centreList[0].lon, Global.mylat, Global.mylon);
-
-                this.loadFloor();
+                    centreList: [],
+                    floorList: [],
+                    lockList: [],
+                })
             }
         }).catch((error) => {
             console.error(error);
@@ -358,13 +286,24 @@ export default class Home extends Component {
             }
         }).then((json) => {
             console.log(json.floorList);
-            if (json.floorList.length > 0) {
+            if (json.code === 0) {
+                this.setState({floorList: json.floorList});
+                if (json.floorList.length > 0) {
+                    this.setState({floorId: json.floorList[0].id});
+                    this.loadLock();
+                } else {
+                    this.setState({
+                        floorList: [],
+                        lockList: [],
+                    })
+                }
+            } else {
                 this.setState({
-                    floorList: json.floorList,
-                    floorId: json.floorList[0].id
-                });
-                this.loadLock();
+                    floorList: [],
+                    lockList: [],
+                })
             }
+
         }).catch((error) => {
             console.error(error);
         });
@@ -390,9 +329,9 @@ export default class Home extends Component {
             }
         }).then((json) => {
             console.log(json.lockList);
-            if (json.lockList.length > 0) {
-                json.lockList.forEach((value, index, array) => {
-                    value.key = value.id;
+            if (json.code === 0) {
+                json.lockList.map(value => {
+                    value.status = "未开锁"
                 });
                 this.setState({
                     lockList: json.lockList
@@ -403,61 +342,94 @@ export default class Home extends Component {
         });
     }
 
-    punchClock() {
-        // alert(Global.distance)
-        let diss = Global.distance;
-        if (Number.isNaN(diss) || diss > 2000) {
-            Toast.show('不能打卡');
-        } else {
-            // alert(Global.token);
-            let REQUEST_URL = `${Global.baseUrl}lock/app/clock/punchTheClock`;
-            let params = {"centreId": "1"};
-            console.log(params);
-            fetch(REQUEST_URL, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'token': Global.token,
-                },
-                body: JSON.stringify(params)
-            }).then((response) => {
-                if (response.ok) {
-                    console.log(response);
-                    return response.json();
+
+    openClock(id) {
+        let REQUEST_URL = `${Global.baseUrl}lock/app/wechat/saveByLockId`;
+        let params = {"lockId": Global.lockId};
+        console.log(params);
+        fetch(REQUEST_URL, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'token': Global.token,
+            },
+            body: JSON.stringify(params)
+        }).then((response) => {
+            if (response.ok) {
+                console.log(response);
+                return response.json();
+            }
+        }).then((json) => {
+            console.log(json);
+
+            function sleep(n) {
+                let start = new Date().getTime();
+                while (true) if (new Date().getTime() - start > n) break;
+            }
+
+            for (let i = 0; i < 4; i++) {
+                this.queryLock(id);
+                sleep(1000)
+            }
+        }).catch((error) => {
+            console.error(error);
+        });
+
+    }
+
+    queryLock(id) {
+        let REQUEST_URL = `${Global.baseUrl}lock/app/longOpenDoor/queryLongOpenDoorList`;
+        let params = {"lockId": id};
+        console.log(params);
+        fetch(REQUEST_URL, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'token': Global.token,
+            },
+            body: JSON.stringify(params)
+        }).then((response) => {
+            if (response.ok) {
+                console.log(response);
+                return response.json();
+            }
+        }).then((json) => {
+            console.log(json);
+            if (json.msg === 'success') {
+                this.state.lockList.map(value => {
+                    if (value.id === id) {
+                        value.status = "已开锁"
+                    }
+                });
+                this.setState({lockList: this.state.lockList});
+                this.animate(5)
+            }
+
+        }).catch((error) => {
+            console.error(error);
+        });
+
+    }
+
+    animate(time) {
+        this.timerID = setInterval(() => {
+                if (time === 0) {
+                    clearInterval(this.timerID);
+                    this.state.lockList.map(value => {
+                        value.status = "未开锁"
+                    });
+                    this.setState({lockList: this.state.lockList});
                 }
-            }).then((json) => {
-                console.log(json);
-                Toast.show('打卡成功');
-            }).catch((error) => {
-                console.error(error);
-            });
-        }
+                time = time - 1;
+                this.setState({time})
+            }, 1000
+        );
     }
 
-    //经纬度转换成三角函数中度分表形式。
-    rad(d) {
-        return d * Math.PI / 180.0;
-    }
-
-    /**
-     *
-     * @param lat1  纬度1
-     * @param lng1  经度1
-     * @param lat2  纬度2
-     * @param lng2  经度2
-     */
-    //根据经纬度计算距离
-    geoDistance(lat1, lng1, lat2, lng2) {
-        let radLat1 = this.rad(lat1);
-        let radLat2 = this.rad(lat2);
-        let a = radLat1 - radLat2;
-        let b = this.rad(lng1) - this.rad(lng2);
-        let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) + Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)));
-        s = s * 6378.137;// EARTH_RADIUS;
-        s = Math.round(s * 10000) / 10; //输出为米
-        console.log("distance:" + s);
-        Global.distance = s;
+    componentWillUnmount() {
+        clearInterval(this.timerID);
     }
 
     render() {
@@ -468,41 +440,36 @@ export default class Home extends Component {
         }
         return (
             <SafeAreaView style={{flex: 1}}>
-                <View style={styles.container}>
-                    <StatusBar backgroundColor={'rgba(4,153,255,0.8)'} translucent={false}/>
-                    <ScrollView>
-                        <ImageBackground source={require('../static/index.png')}
-                                         style={{height: scaleSize(510), width: deviceWidth}}>
+                <ImageBackground source={require('../static/bg_default.jpg')}
+                                 style={{flex: 1}}>
+                    <View style={styles.container}>
+                        <StatusBar backgroundColor={'#02d8f4'} translucent={false}/>
+                        <ScrollView>
                             <View style={styles.wapper}>
                                 <Input
                                     inputStyle={{color: "#fff"}}
                                     underlineColorAndroid="transparent"  //android需要设置下划线为透明才能去掉下划线
                                     placeholder='搜索楼宇...'
                                     containerStyle={styles.search}
-                                    autoFocus={false}
+                                    onChangeText={(text) => this.searchCentre(text)}
                                     leftIcon={{type: 'font-awesome', name: 'search', color: "#fff"}}/>
+                                <Image source={require("../static/logo_home.png")}
+                                       style={{width: scaleSize(571), height: scaleSize(200), marginTop: 20}}/>
                                 <View style={styles.contentContainer}>
                                     <ScrollView
                                         horizontal={true}
-                                        scrollEnabled={true}
+                                        scrollEnabled={false}
                                         showsHorizontalScrollIndicator={false}
                                         ref="scrollView">
                                         {
                                             this.state.centreList.map((item, index) => {
                                                 return (
                                                     <View style={styles.swiperItem} key={index}>
-                                                        <ImageBackground
-                                                            source={require('../static/ld_icon.png')}
-                                                            key={index}
-                                                            imageStyle={{width: 100, height: 100, marginLeft: 150}}
-                                                            style={{width: 400, height: 100, alignItems: "center",}}>
-                                                            <Text style={{
-                                                                color: "#fff",
-                                                                fontSize: 20,
-                                                                fontWeight: "500",
-                                                                marginTop: 30
-                                                            }}>{item.name}</Text>
-                                                        </ImageBackground>
+                                                        <Text style={{
+                                                            color: "#fff",
+                                                            fontSize: 20,
+                                                            fontWeight: "500",
+                                                        }}>{item.name}</Text>
                                                     </View>
                                                 )
                                             })
@@ -565,76 +532,68 @@ export default class Home extends Component {
                                 </View>
 
                             </View>
-                        </ImageBackground>
+                            <View style={styles.container}>
+                                <View style={styles.lockBg}>
+                                    <Swiper
+                                        style={styles.wrapper}
+                                        width={deviceWidth}
+                                        height={10}
+                                        horizontal={true}>
+                                        {
+                                            this.state.lockList.map((item, index) => {
+                                                console.log(item, index);
+                                                return (
+                                                    <TouchableOpacity
+                                                        onPress={() => {
+                                                            this.openClock(item.id);
+                                                        }}>
+                                                        <View style={{
+                                                            alignItems: "center",
+                                                            justifyContent: "center",
+                                                        }}>
+                                                            <ImageBackground
+                                                                source={require('../static/icon_lock_bg.png')}
+                                                                style={{
+                                                                    width: scaleSize(300),
+                                                                    height: scaleSize(300),
+                                                                    alignItems: "center",
+                                                                }}>
+                                                                <Image
+                                                                    source={require("../static/icon_lock.png")}
+                                                                    style={{
+                                                                        marginTop: scaleSize(50),
+                                                                        width: scaleSize(80),
+                                                                        height: scaleSize(105)
+                                                                    }}/>
+                                                                <Text style={styles.textLock}>{item.status}</Text>
+                                                            </ImageBackground>
 
+                                                            <Text style={styles.compan}>{item.name}</Text>
 
-                        <FlatList
-                            data={this.state.lockList}
-                            horizontal={true}
-                            renderItem={this.allLocks.bind(this)}
-                            style={{marginTop: 25, alignSelf: 'center'}}
-                            showsHorizontalScrollIndicator={false}/>
-
-                        <TouchableOpacity style={styles.work}
-                                          onPress={this.punchClock}>
-                            <View style={styles.workbg}>
-                                <View style={styles.withC}>
-                                    <Text style={styles.dakai}>打卡</Text>
-                                    <Text style={styles.lastTime}>{this.state.currentTime}</Text>
+                                                        </View>
+                                                    </TouchableOpacity>
+                                                )
+                                            })
+                                        }
+                                    </Swiper>
                                 </View>
                             </View>
-                        </TouchableOpacity>
-                    </ScrollView>
-                </View>
+                        </ScrollView>
+                    </View>
+                </ImageBackground>
             </SafeAreaView>
-        );
-    }
-
-    allLocks({item}) {
-        return (
-            <TouchableOpacity
-                onPress={() => {
-                    this.props.navigation.navigate('OpenDoor');
-                    console.log(item);
-                    Global.lockCompany = item.companyName.substring(0, 6);
-                    Global.lockName = item.name;
-                    Global.lockId = item.id
-                }}>
-                <View style={{
-                    backgroundColor: "#fff",
-                    width: scaleSize(350),
-                    marginHorizontal: 15,
-                    marginBottom: 15,
-                    alignItems: "center",
-                    justifyContent: "center",
-                    paddingVertical: 20,
-                    shadowColor: '#000',
-                    shadowOffset: {width: 4, height: 4},
-                    shadowOpacity: 0.3,
-                    shadowRadius: 2,
-                    elevation: 5,
-                }}>
-                    <Image
-                        source={require("../static/lock.png")}
-                        style={{width: scaleSize(250), height: scaleSize(250)}}/>
-
-                    <Text style={styles.doorname}>{item.companyName.substring(0, 6)}</Text>
-                    <Text style={styles.compan}>{item.name}</Text>
-
-                </View>
-            </TouchableOpacity>
         );
     }
 }
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f4f4f4",
         alignItems: "center",
     },
     wapper: {
         flex: 1,
         alignItems: "center",
+        width: deviceWidth,
     },
     search: {
         backgroundColor: "rgba(255,255,255,0.5)",
@@ -671,49 +630,25 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         position: "relative",
     },
-    doorname: {
-        fontSize: setSpText(25),
-        color: "#40425F",
-        marginLeft: 5,
-        marginRight: 5
-    },
     compan: {
-        fontSize: 18,
-        color: "#999",
-    },
-    work: {
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    dakai: {
-        color: "#0090FF",
+        marginTop: 20,
         fontSize: 20,
-
+        color: "#058fc8",
     },
-    workbg: {
-        width: scaleSize(200),
-        height: scaleSize(200),
+    lockBg: {
+        flex: 1,
         alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "blue",
-        borderRadius: 70,
-        shadowColor: '#000',
-        shadowOffset: {width: 1, height: 1},
-        shadowOpacity: 0.3,
-        shadowRadius: 2,
-        elevation: 2,
-        marginTop: 20
+        backgroundColor: 'white',
+        width: "90%",
+        paddingTop: 30,
+        height: scaleSize(700),
+        marginTop: 30,
+        borderRadius: scaleSize(30),
     },
-    withC: {
-        width: scaleSize(150),
-        height: scaleSize(150),
-        backgroundColor: "#fff",
-        borderRadius: scaleSize(100),
-        alignItems: "center",
-        justifyContent: "center",
-    },
-    lastTime: {
-        color: "#444662",
+    wrapper: {},
+    textLock: {
+        marginTop: 15,
+        color: "#02d8f4",
         fontSize: 16,
-    }
+    },
 });

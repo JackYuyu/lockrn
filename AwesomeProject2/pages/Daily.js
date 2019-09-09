@@ -1,10 +1,11 @@
 import React, {Component} from 'react';
-import {Alert, FlatList, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, FlatList, ImageBackground, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Divider, Image} from 'react-native-elements';
 import * as Global from "./Global";
 import moment from "moment";
 import 'moment/locale/zh-cn';
 import PickerData from "./Picker";
+import {scaleSize} from "../utils/ScreenUtil";
 
 export default class Daily extends Component {
     static navigationOptions = {
@@ -67,71 +68,71 @@ export default class Daily extends Component {
     render() {
         return (
             <SafeAreaView style={{flex: 1}}>
-                <View style={styles.container}>
+                <ImageBackground source={require('../static/bg_default.jpg')}
+                                 style={{flex: 1}}>
                     <View style={styles.top}>
-                        <View style={styles.full}>
-                            <View style={styles.totalBox}>
-                                <Image
-                                    source={require("../static/my/zhou.png")}
-                                    style={{width: 26, height: 26, marginRight: 15}}
-                                />
-                                <Text style={styles.total}>{this.state.attendanceWeek}天</Text>
-                            </View>
-
-                        </View>
-                        <View style={{overflow: "hidden"}}>
-                            {
-                                this.state.topDivider.map(() => {
-                                    return <Divider
-                                        style={{backgroundColor: '#333', width: 1, height: 3, marginBottom: 2}}/>
-                                })
-                            }
-                        </View>
-                        <View style={styles.full}>
-                            <View style={styles.totalBox}>
-                                <Image
-                                    source={require("../static/my/yue.png")}
-                                    style={{width: 26, height: 26, marginRight: 15}}
-                                />
-                                <Text style={styles.total}>{this.state.attendanceMonth}天</Text>
-                            </View>
-
-                        </View>
-
-                        <PickerData
-                            visible={this.state.isDateTimePickerVisible}
-                            onCancel={
-                                () => {
-                                    this.setState({isDateTimePickerVisible: false});
-                                    return null;
-                                }
-                            }
-                            onComfig={
-                                (time) => {
-                                    console.log(time)
-                                    this.getMonthData(time.substring(0,4), time.substring(4,6));
-
-                                    this.setState({isDateTimePickerVisible: false});
-                                    return null;
-                                }
-                            }
-                            onRequestClose={
-                            () => {
-                                this.setState({isDateTimePickerVisible: false});
-                                return null;
-                            }
-                        }
+                        <Image
+                            source={require("../static/icon_back.png")}
+                            style={{width: 20, height: 20, padding: 15}}
                         />
-
-
+                        <Text style={styles.titleDaily}>打卡统计</Text>
                     </View>
-                    <FlatList
-                        data={this.state.data}
-                        renderItem={this.contentView}
-                        style={styles.list}
-                        keyExtractor={item => item.id}
-                    />
-                </View>
+                    <View style={styles.container}>
+                        <View style={styles.top}>
+                            <View style={styles.full}>
+                                <View style={styles.totalBox}>
+                                    <Image
+                                        source={require("../static/my/zhou.png")}
+                                        style={{width: 26, height: 26, marginRight: 15}}
+                                    />
+                                    <Text style={styles.total}>{this.state.attendanceWeek}天</Text>
+                                </View>
+
+                            </View>
+                            <View style={{overflow: "hidden"}}>
+                                <Image
+                                    source={require("../static/line_daily.png")}
+                                    resizeMode='contain'
+                                    style={{width: 9, height: 80}}/>
+                            </View>
+                            <View style={styles.full}>
+                                <View style={styles.totalBox}>
+                                    <Image
+                                        source={require("../static/my/yue.png")}
+                                        style={{width: 26, height: 26, marginRight: 15}}/>
+                                    <Text style={styles.total}>{this.state.attendanceMonth}天</Text>
+                                </View>
+
+                            </View>
+
+                            <PickerData
+                                visible={this.state.isDateTimePickerVisible}
+                                onCancel={() => {
+                                    this.setState({isDateTimePickerVisible: false});
+                                    return null;
+                                }}
+                                onComfig={(time) => {
+                                    console.log(time);
+                                    this.getMonthData(time.substring(0, 4), time.substring(4, 6));
+
+                                    this.setState({isDateTimePickerVisible: false});
+                                    return null;
+                                }}
+                                onRequestClose={() => {
+                                    this.setState({isDateTimePickerVisible: false});
+                                    return null;
+                                }}
+                            />
+
+                        </View>
+                        <Divider style={{backgroundColor: '#02d8f4', width: '95%', marginLeft: 10}}/>
+                        <FlatList
+                            data={this.state.data}
+                            renderItem={this.contentView}
+                            keyExtractor={item => item.id}
+                        />
+                    </View>
+                </ImageBackground>
             </SafeAreaView>
         );
     }
@@ -282,11 +283,12 @@ export default class Daily extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#f4f4f4",
+        backgroundColor: 'white',
+        margin: 20,
+        borderRadius: 15,
     },
     top: {
         paddingVertical: 20,
-        backgroundColor: "#fff",
         flexDirection: "row",
     },
     full: {
@@ -298,8 +300,12 @@ const styles = StyleSheet.create({
     },
     total: {
         fontSize: 20,
-        color: "#0090FF",
-
+        color: "#02d8f4",
+    },
+    titleDaily: {
+        marginLeft:20,
+        fontSize: 20,
+        color: "white",
     },
     desc: {
         marginTop: 10,
@@ -313,7 +319,6 @@ const styles = StyleSheet.create({
         marginBottom: 3
     },
     record: {
-        backgroundColor: "#fff",
         marginTop: 10,
         paddingVertical: 20
     },
@@ -338,7 +343,4 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginTop: 10
     },
-    list: {
-        backgroundColor: "#F5FCFF"
-    }
 });

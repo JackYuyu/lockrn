@@ -1,4 +1,4 @@
-rootProject.name = 'AwesomeProject'
+rootProject.name = '云管家'
 include ':jcore-react-native'
 project(':jcore-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/jcore-react-native/android')
 

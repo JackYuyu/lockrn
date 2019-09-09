@@ -12,6 +12,8 @@ import {
 import {Badge, Image, ListItem} from 'react-native-elements'
 import * as Global from "./Global";
 import {setSpText} from "../utils/ScreenUtil";
+import JPushModule from "jpush-react-native";
+import {Toast} from "../utils/Toast";
 
 export default class My extends Component {
     static navigationOptions = {
@@ -34,7 +36,9 @@ export default class My extends Component {
     componentDidMount() {
         this.loadData();
         this.getMsgNum();
-
+        JPushModule.addReceiveNotificationListener(map => {
+            this.getMsgNum()
+        });
     }
 
     render() {
@@ -46,20 +50,17 @@ export default class My extends Component {
                             <ImageBackground source={require('../static/my/my.png')} style={styles.person}>
                                 <TouchableOpacity
                                     onPress={() => {
-                                        this.props.navigation.navigate('Notify')
+                                        this.props.navigation.navigate('Notify', {
+                                            refresh: () => {
+                                                this.getMsgNum()
+                                            }
+                                        })
                                     }}>
                                     <View style={{position: 'relative', height: 50,}}>
-                                        <View style={{position: 'absolute', top: 15, right: 40}}>
-                                            <Image
-                                                source={require('../static/my/xiaoxi.png')}
-                                                style={{width: 28, height: 28}}
-                                            />
-                                            <Badge
-                                                value={this.state.msgNum}
-                                                status="error"
-                                                containerStyle={{position: 'absolute', top: -4, right: 4}}
-                                            />
-                                        </View>
+                                        {
+                                            this.msgNumView()
+                                        }
+
                                     </View>
 
                                 </TouchableOpacity>
@@ -89,7 +90,7 @@ export default class My extends Component {
                                 <ListItem
                                     bottomDivider={true}
                                     onPress={() => {
-                                        if (this.state.name != "") {
+                                        if (this.state.name !== "") {
                                             this.props.navigation.navigate('Personal', {
                                                 name: this.state.name,
                                                 company: this.state.company,
@@ -124,21 +125,21 @@ export default class My extends Component {
                             backgroundColor: "#fff",
                             paddingVertical: 15
                         }}>
-                            <ListItem
-                                bottomDivider={true}
-                                chevron={true}
-                                onPress={() => {
-                                    this.props.navigation.navigate('Daily')
-                                }}
-                                leftAvatar={
-                                    <Image
-                                        source={require("../static/my/daka.png")}
-                                        style={{width: 26, height: 26}}
-                                    />
-                                }
-                                title="打卡统计"
-                                subtitle={null}
-                            />
+                            {/*<ListItem*/}
+                            {/*bottomDivider={true}*/}
+                            {/*chevron={true}*/}
+                            {/*onPress={() => {*/}
+                            {/*this.props.navigation.navigate('Daily')*/}
+                            {/*}}*/}
+                            {/*leftAvatar={*/}
+                            {/*<Image*/}
+                            {/*source={require("../static/my/daka.png")}*/}
+                            {/*style={{width: 26, height: 26}}*/}
+                            {/*/>*/}
+                            {/*}*/}
+                            {/*title="打卡统计"*/}
+                            {/*subtitle={null}*/}
+                            {/*/>*/}
                             <ListItem
                                 bottomDivider={true}
                                 chevron={true}
@@ -249,17 +250,16 @@ export default class My extends Component {
                 return response.json();
             }
         }).then((json) => {
-            console.log(json.user);
-            if (json.user !== undefined) {
-                this.setState(
-                    {
-                        name: json.user.name,
-                        company: json.user.companyName,
-                        mobile: json.user.phoneNum,
-                        address: json.user.centreName,
-                        avatar: json.user.headpicture,
-                    }
-                );
+            if (json.code === 0) {
+                this.setState({
+                    name: json.user.name,
+                    company: json.user.companyName,
+                    mobile: json.user.phoneNum,
+                    address: json.user.centreName,
+                    avatar: json.user.headpicture,
+                });
+            } else {
+                Toast.show(json.msg)
             }
         }).catch((error) => {
             console.error(error);
@@ -291,6 +291,28 @@ export default class My extends Component {
         }).catch((error) => {
             console.error(error);
         });
+    }
+
+    msgNumView() {
+        if (this.state.msgNum > 0) {
+            return <View style={{position: 'absolute', top: 15, right: 40}}>
+                <Image
+                    source={require('../static/my/xiaoxi.png')}
+                    style={{width: 28, height: 28}}
+                />
+                <Badge
+                    value={this.state.msgNum}
+                    status="error"
+                    containerStyle={{position: 'absolute', top: -4, right: 4}}/>
+            </View>
+        } else {
+            return <View style={{position: 'absolute', top: 15, right: 40}}>
+                <Image
+                    source={require('../static/my/xiaoxi.png')}
+                    style={{width: 28, height: 28}}
+                />
+            </View>
+        }
     }
 }
 

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Picker, StyleSheet, Text, View} from 'react-native';
+import {Picker, StyleSheet, Text, View, FlatList, TouchableOpacity, ImageBackground, SafeAreaView} from 'react-native';
 
 import {Divider, Input} from 'react-native-elements';
 import LinearGradient from 'react-native-linear-gradient'
@@ -9,22 +9,27 @@ import moment from 'moment'
 import {Toast} from "../utils/Toast";
 import {scaleSize} from "../utils/ScreenUtil"
 
-
+var _this = this;
 export default class Apply extends Component {
-    state = {
-        mode: 'date',
-        isDateTimePickerVisible: false,
-        username: '',
-        mobile: '',
-        companyName: '',
-        remark: '洽谈',
-        date: '',
-        startTime: '',
-        endTime: '',
-        other: '',
-        showOther: false,
-        isToday: false,
-    };
+    constructor(props) {
+        super(props);
+        _this = this;
+        this.state = {
+            mode: 'date',
+            data: [{content: "洽谈"}, {content: "面试"}, {content: "会议"}, {content: "拜访"}, {content: "其他"}],
+            isDateTimePickerVisible: false,
+            username: '',
+            mobile: '',
+            companyName: '',
+            remark: '',
+            date: '',
+            startTime: '',
+            endTime: '',
+            other: '',
+            showOther: false,
+            isToday: false,
+        };
+    }
 
     _showDateTimePicker = () => this.setState({mode: 'date', isDateTimePickerVisible: true});
 
@@ -77,13 +82,11 @@ export default class Apply extends Component {
         });
     }
 
-    onValueChange(value, index) {
-        console.log(value, index);
+    onValueChange(value) {
         this.setState({
             remark: value,
             showOther: value === '其他'
         })
-
     }
 
     render() {
@@ -120,7 +123,7 @@ export default class Apply extends Component {
                               this._showDateTimePicker()
                           }}>{this.state.date}</Text>
                 </View>
-                <Divider style={{backgroundColor: 'black', width: '95%', marginLeft: 10}}/>
+                <Divider style={{backgroundColor: '#02d8f4', width: '95%', marginLeft: 10}}/>
                 <View style={styles.textStyle}>
                     <Text style={styles.dateStar}
                           onPress={() => {
@@ -131,21 +134,16 @@ export default class Apply extends Component {
                               this._showTimePicker()
                           }}>{this.state.startTime}</Text>
                 </View>
-                <Divider style={{backgroundColor: 'black', width: '95%', marginLeft: 10}}/>
-                <View style={{flexDirection: "row", alignItems: "center", justifyContent: "center", marginVertical: 5}}>
-
-                    <Text style={{fontSize: 15, width: 80, textAlign: "center",}}>事由</Text>
-                    <Picker
-                        style={{flex: 1, paddingLeft: 20}}
-                        onValueChange={(value, index) => this.onValueChange(value, index)}
-                        selectedValue={this.state.remark}>
-                        <Picker.Item label="洽谈" value="洽谈"/>
-                        <Picker.Item label="面试" value="面试"/>
-                        <Picker.Item label="会议" value="会议"/>
-                        <Picker.Item label="拜访" value="拜访"/>
-                        <Picker.Item label="其他" value="其他"/>
-                    </Picker>
-                </View>
+                <Divider style={{backgroundColor: '#02d8f4', width: '95%', marginLeft: 10}}/>
+                <Text style={{marginTop: 15, fontSize: 15, width: '95%', marginLeft: 30, color: "#02d8f4"}}>事由</Text>
+                <FlatList
+                    data={this.state.data}
+                    renderItem={this.renderItem}
+                    numColumns={3}
+                    horizontal={false}
+                    keyExtractor={(item, index) => String(index)}
+                    style={{marginTop: 15, alignSelf: 'center', width: '95%'}}
+                    showsHorizontalScrollIndicator={false}/>
                 {this.state.showOther ? (
                     <Input
                         inputStyle={styles.input}
@@ -154,16 +152,24 @@ export default class Apply extends Component {
                             <Text style={styles.text}>其他: </Text>
                         }/>) : (<View/>)
                 }
-                <LinearGradient colors={["#023AFC", "#0499FF"]} start={{x: 0, y: 0}} end={{x: 1, y: 0}}
-                                locations={[0, 0.75]} style={styles.linearGradient}>
+                <Divider style={{backgroundColor: '#02d8f4', width: '95%', marginLeft: 10, marginTop: scaleSize(150)}}/>
+                <ImageBackground
+                    source={require('../static/bg_submit.png')}
+                    style={{
+                        width: scaleSize(80),
+                        height: scaleSize(80),
+                        marginTop: scaleSize(-45),
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}>
                     <Text style={styles.buttonText}
                           onPress={() => {
                               this.applyPress()
                           }}>
                         提交
                     </Text>
-                </LinearGradient>
 
+                </ImageBackground>
                 <DateTimePicker
                     isVisible={this.state.isDateTimePickerVisible}
                     mode={this.state.mode}
@@ -173,6 +179,27 @@ export default class Apply extends Component {
             </View>
 
         );
+    }
+
+    renderItem({item}) {
+        if (_this.state.remark === item.content) {
+            return (
+                <Text style={styles.selectData}>
+                    {item.content}
+                </Text>
+            )
+        } else {
+            return (
+                <TouchableOpacity
+                    onPress={() => {
+                        _this.onValueChange(item.content);
+                    }}>
+                    <Text style={styles.unSelectData}>
+                        {item.content}
+                    </Text>
+                </TouchableOpacity>
+            )
+        }
     }
 
     //请求
@@ -212,7 +239,7 @@ export default class Apply extends Component {
             }).then((json) => {
                 console.log(json);
                 Toast.show('已发出邀约，等待对方接受');
-                    this.props.navigation.navigate('InviteHistory')
+                this.props.navigation.navigate('InviteHistory')
             }).catch((error) => {
                 console.error(error);
             });
@@ -225,15 +252,14 @@ const styles = StyleSheet.create({
         backgroundColor: "#FFF",
         paddingHorizontal: 15,
         paddingBottom: 25,
-        borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15,
-
+        borderRadius: 15,
+        alignItems: "center",
     },
     input: {
-        color: "#666", marginBottom: 5
+        color: "#02d8f4", marginBottom: 5
     },
     text: {
-        color: "#666"
+        color: "#02d8f4"
     },
     star: {
         color: "red"
@@ -256,16 +282,32 @@ const styles = StyleSheet.create({
     },
     otherText: {
         paddingTop: scaleSize(30),
-        color: "#666"
+        color: "#02d8f4"
     },
 
     buttonText: {
         color: "#fff",
-        fontSize: 18,
-        width: "100%",
-        height: 50,
-        paddingTop: scaleSize(23),
-        paddingLeft: scaleSize(250)
+        fontSize: 14,
+    },
+    selectData: {
+        height: 44,
+        lineHeight: 44,
+        width: 100,
+        marginLeft: 10,
+        marginBottom: 10,
+        backgroundColor: 'blue',
+        color: 'white',
+        textAlign: 'center'
+    },
+    unSelectData: {
+        height: 44,
+        lineHeight: 44,
+        width: 100,
+        marginLeft: 10,
+        marginBottom: 10,
+        backgroundColor: '#F7F7F7',
+        color: '#DDDDDD',
+        textAlign: 'center'
     },
     linearGradient: {
         width: "80%",
